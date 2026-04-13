@@ -1,119 +1,163 @@
-# 🛒 E-commerce Vibe Pulse - Sprint 1 (Grupo 1)
+# Ecommerce Vibe Pulse
 
-**Proyecto:** E-commerce web de ropa juvenil.  
-**Objetivo Académico:** Desarrollar módulos independientes para realizar pruebas funcionales, visuales e integradas.  
-**Duración del Sprint:** 1 semana.  
-**Equipo:** Grupo 1 (6 integrantes).
+Aplicación web de e-commerce de ropa juvenil. Este repositorio contiene el Sprint 1: **Autenticación y Registro de Usuarios**.
 
-Este repositorio contiene la arquitectura inicial y el **Sprint 1**, enfocándose única y exclusivamente en la **Autenticación y Registro de Usuarios**.
+## Tecnologías
 
----
-
-## 🎯 Objetivo del Sprint 1
-
-Permitir que una persona pueda iniciar sesión o crear una cuenta. El sistema redirige automáticamente según las credenciales: cliente al sitio de compras y administrador al panel admin.
-
-### Alcance
-- Pantalla de Login.
-- Pantalla de Registro.
-- Validaciones completas de acceso (Front-end y Back-end).
-- Redirección automática según el rol asignado a las credenciales.
+- **Frontend:** React 18 + Vite + TypeScript
+- **Backend:** Node.js + Express + TypeScript
+- **Base de datos:** PostgreSQL + Prisma ORM
+- **Seguridad:** bcrypt para contraseñas
 
 ---
 
-## ✅ Criterios de Aceptación y Requerimientos
+## Requisitos previos
 
-### 1. Funcionalidad de Frontend (React + Vite + TypeScript)
+Antes de empezar, asegúrate de tener instalado:
 
-#### **Login**
-- Se visualiza la pantalla de inicio de sesión con los campos **Correo** y **Contraseña**.
-- Validaciones en tiempo real: formato válido para el correo y la contraseña no puede estar vacía.
-- El botón **"Iniciar sesión"** permanecerá **deshabilitado** si hay campos vacíos.
-- Mensaje de error claro si las credenciales son incorrectas.
-- 🚫 **No** existe un selector manual de rol a la vista en la pantalla de login.
-- Accesibilidad a la pantalla de "Registro" desde aquí.
+- [Node.js](https://nodejs.org/) v18 o superior
+- [PostgreSQL](https://www.postgresql.org/) corriendo en tu máquina (puerto 5432 por defecto)
+- npm (viene con Node.js)
 
-#### **Registro**
-- Campos solicitados: **Nombre completo**, **Correo**, **Contraseña** y **Confirmar contraseña**.
-- Validaciones: 
-  - Todos los campos son estrictamente obligatorios.
-  - Las contraseñas digitadas deben coincidir.
-  - Se debe cumplir con una longitud mínima de contraseña.
-- Se debe aceptar la casilla obligatoria de **"Términos y Condiciones"** para continuar.
-- El botón de **"Crear cuenta"** solo se habilita al cumplir la validación de todos los datos.
-- Se muestra una **confirmación visual** tras un registro exitoso (antes de redirigir al login y/o página principal).
-- Se puede retroceder del registro al login sin errores visuales.
+---
 
-#### **Interfaz / UX Común**
-- Estados visuales en inputs: **foco** (focus), **error** y **éxito** (success).
-- Prevención de **envíos duplicados** en formularios (al hacer clics rápidos/repetitivos).
-- La vista es construida ***responsive***, funcionando en modo Desktop y adaptándose a pantallas menores.
-- Mantener la coherencia visual con la aplicación estipulada para los demás grupos. Toda la interfaz será en español.
+## Configuración de la Base de Datos
 
-### 2. Lógica de Negocio / Backend (Node.js + Express + TypeScript)
+1. Abre tu cliente de PostgreSQL (pgAdmin, DBeaver, o la terminal).
+2. Crea una base de datos llamada `ecommerce`:
+   ```sql
+   CREATE DATABASE ecommerce;
+   ```
+3. Anota tu usuario y contraseña de PostgreSQL, los necesitarás en el siguiente paso.
 
-- Creación y verificación de usuarios con contraseñas encriptadas en la Base de Datos PostgreSQL.
-- **Redirección Basada en Roles:**
-  - Si un usuario tiene el Rol `CLIENT` (cliente común), este será redirigido a la **página principal**.
-  - Si un usuario tiene el Rol `ADMIN` (administrador), el sistema lo redirigirá al **panel administrativo**.
+---
 
-### 3. Modelo de Datos Prisma (Obligatorio)
+## Backend
 
-La tabla de base de datos debe ser implementada manteniendo los campos y enumeraciones exactos según lo solicitado:
+### 1. Instalar dependencias
 
-```prisma
-model User {
-  id        Int     @id @default(autoincrement())
-  name      String
-  email     String  @unique
-  password  String
-  role      Role
+```bash
+cd server
+npm install
+```
+
+### 2. Configurar variables de entorno
+
+El archivo `server/.env` ya existe en el repositorio. Ábrelo y ajusta los valores según tu configuración local:
+
+```env
+DATABASE_URL="postgresql://postgres:TU_CONTRASEÑA@localhost:5432/ecommerce"
+PORT=4000
+ADMIN_EMAIL=admin@vibepulse.com
+```
+
+> Reemplaza `postgres` con tu usuario de PostgreSQL y `TU_CONTRASEÑA` con tu contraseña.
+
+### 3. Crear las tablas en la base de datos
+
+```bash
+npx prisma db push
+```
+
+Esto lee el archivo `server/prisma/schema.prisma` y crea la tabla `User` en tu base de datos automáticamente.
+
+### 4. Iniciar el servidor
+
+```bash
+npm run dev
+```
+
+El servidor arranca en `http://localhost:4000`.
+
+Para verificar que esté corriendo, abre en el navegador:
+```
+http://localhost:4000/api/health
+```
+Deberías ver: `{"status":"ok","message":"Authentication API is running"}`
+
+---
+
+## Frontend
+
+Abre una **nueva terminal** (sin cerrar la del backend).
+
+### 1. Instalar dependencias
+
+```bash
+cd client
+npm install
+```
+
+### 2. Iniciar la aplicación
+
+```bash
+npm run dev
+```
+
+La aplicación abre en `http://localhost:5173`.
+
+---
+
+## Uso
+
+Una vez que tanto el backend como el frontend están corriendo:
+
+- Entra a `http://localhost:5173` — te redirige automáticamente a `/login`.
+- **Registro:** Ve a `/register`, completa el formulario y crea tu cuenta.
+- **Login:** Ingresa con tu correo y contraseña.
+  - Si el rol es `CLIENT` → redirige a `/home`.
+  - Si el rol es `ADMIN` → redirige a `/admin`.
+
+El correo que se define como `ADMIN_EMAIL` en el `.env` del servidor se registra automáticamente con rol administrador.
+
+---
+
+## Endpoints de la API
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `GET`  | `/api/health` | Verifica que el servidor esté activo |
+| `POST` | `/api/auth/register` | Registra un nuevo usuario |
+| `POST` | `/api/auth/login` | Inicia sesión y devuelve el usuario con su rol |
+
+### Ejemplos de cuerpo (JSON)
+
+**Registro:**
+```json
+{
+  "name": "Alex Rivera",
+  "email": "alex@ejemplo.com",
+  "password": "mipassword"
 }
+```
 
-enum Role {
-  CLIENT
-  ADMIN
+**Login:**
+```json
+{
+  "email": "alex@ejemplo.com",
+  "password": "mipassword"
 }
 ```
 
 ---
 
-## ⚠️ Reglas de Oro para la Integración
+## Estructura del proyecto
 
-Para evitar generar conflictos con los grupos próximos (Sprints 2 al 5), los siguientes acuerdos son inquebrantables:
-- Estructura unificada usando **TypeScript**.
-- Uso exclusivo de las herramientas base indicadas (React, Vite, Express, PostgreSQL, Prisma). **No** sustituir librerías base.
-- Se deben respetar los nombres de **rutas**, **componentes base** y la misma estandarización de jerarquía de carpetas.
-- Mismos estilos: respetar misma **paleta de colores**, **tipografías** y **botones principales**.
-- En caso de ser necesarios, acordar el uso de **datos simulados (mock data)** que todo equipo comparta.
-
----
-
-## ⚙️ Pasos para ejecutar el Entorno
-
-### Entorno del Backend
-1. Entrar al directorio del servidor:
-   ```bash
-   cd server
-   npm install
-   ```
-2. Crear tu archivo de variables locales `.env` y agregar la cadena de conexión de Prisma:
-   ```env
-   DATABASE_URL="postgresql://usuario:password@localhost:5432/vibepulse?schema=public"
-   ```
-3. Migrar la base de datos y arrancar:
-   ```bash
-   npx prisma db push
-   npm run dev
-   ```
-
-### Entorno del Frontend
-1. En otra consola o terminal ingresar a cliente e instalar:
-   ```bash
-   cd client
-   npm install
-   ```
-2. Iniciar el servidor local de Vite:
-   ```bash
-   npm run dev
-   ```
+```
+ecommerce-vibe-pulse/
+├── client/            # Frontend
+│   └── src/
+│       ├── assets/    # Imágenes
+│       ├── pages/     # Login, Register, Home, Admin
+│       ├── routes/    # Rutas protegidas
+│       ├── services/  # Llamadas a la API
+│       └── utils/     # Manejo de sesión (localStorage)
+├── server/            # Backend
+│   ├── prisma/        # Schema de la base de datos
+│   └── src/
+│       ├── config/    # Conexión a Prisma
+│       ├── controllers/
+│       ├── routes/
+│       └── services/  # Lógica con bcrypt y Prisma
+└── README.md
+```
