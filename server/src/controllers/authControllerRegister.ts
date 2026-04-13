@@ -1,16 +1,11 @@
 import { Request, Response } from "express";
-import { createUser, findUserByEmail, validatePassword } from "../services/userService";
+import { createUser, findUserByEmail } from "../services/userService";
 import { Role } from "@prisma/client";
 import { Prisma } from "@prisma/client";
+import { isValidEmail } from "./authControllerLogin";
 
 const PASSWORD_MIN_LENGTH = 6;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL?.toLowerCase().trim() || "admin@vibepulse.com";
-
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function isValidEmail(email: string): boolean {
-  return emailPattern.test(email);
-}
 
 export async function register(req: Request, res: Response): Promise<Response> {
   const { name, email, password } = req.body;
@@ -72,45 +67,6 @@ export async function register(req: Request, res: Response): Promise<Response> {
       });
     }
     console.error("[register] Unexpected error:", err);
-    return res.status(500).json({ error: "Error interno del servidor. Intenta más tarde." });
-  }
-}
-
-export async function login(req: Request, res: Response): Promise<Response> {
-  const { email, password } = req.body;
-
-  if (!email || !email.trim()) {
-    return res.status(400).json({ error: "El correo es obligatorio." });
-  }
-  if (!password) {
-    return res.status(400).json({ error: "La contraseña es obligatoria." });
-  }
-  if (!isValidEmail(email)) {
-    return res.status(400).json({ error: "El correo no tiene un formato válido." });
-  }
-
-  try {
-    const user = await findUserByEmail(email.toLowerCase().trim());
-    if (!user) {
-      return res.status(401).json({ error: "Correo o contraseña incorrectos." });
-    }
-
-    const isValid = await validatePassword(password, user.password);
-    if (!isValid) {
-      return res.status(401).json({ error: "Correo o contraseña incorrectos." });
-    }
-
-    return res.status(200).json({
-      message: "Inicio de sesión exitoso.",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
-  } catch (err) {
-    console.error("[login] Unexpected error:", err);
     return res.status(500).json({ error: "Error interno del servidor. Intenta más tarde." });
   }
 }

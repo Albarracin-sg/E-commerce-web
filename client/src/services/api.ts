@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export type LoginPayload = {
   email: string;
   password: string;
@@ -21,22 +23,23 @@ export type AuthResponse = {
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 async function request<T>(path: string, body: object): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error || "Error de servidor");
+  try {
+    const { data } = await api.post<T>(path, body);
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error || "Error de servidor");
+    }
+    throw new Error("Error de conexión con el servidor");
   }
-
-  return data as T;
 }
 
 export function loginRequest(payload: LoginPayload) {
