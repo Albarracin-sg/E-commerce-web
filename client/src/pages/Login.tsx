@@ -75,10 +75,10 @@ export default function Login() {
       badge={{ text: "VIBRA SHOP" }}
     >
       <div className="w-full max-w-[420px]">
-        <h2 className="text-[2rem] font-display font-bold text-slate-800 mb-2.5 tracking-tight">
+        <h2 className="text-[2rem] font-display font-bold text-slate-800 mb-2 tracking-tight">
           Bienvenido.
         </h2>
-        <p className="text-slate-500 text-[0.95rem] mb-8">
+        <p className="text-slate-500 text-[0.92rem] mb-7">
           Ingresa tus credenciales para continuar tu experiencia.
         </p>
 
@@ -119,9 +119,9 @@ export default function Login() {
               </label>
               <Link
                 to="#"
-                className="text-xs font-bold text-blue-500 no-underline uppercase tracking-wide"
+                className="text-xs font-bold text-blue-500 no-underline uppercase tracking-wide hover:text-blue-700 transition-colors"
               >
-                ¿Olvidaste?
+                ¿Olvidaste tu contraseña?
               </Link>
             </div>
             <AuthInput
@@ -154,18 +154,18 @@ export default function Login() {
 
         <SocialButtons />
 
-        <div className="mt-6 text-center text-[0.95rem] text-slate-500">
+        <div className="mt-5 text-center text-[0.92rem] text-slate-500">
           ¿Aún no tienes cuenta?{" "}
           <Link
             to="/register"
-            className="text-blue-900 font-bold no-underline ml-1.5"
+            className="text-blue-700 font-bold no-underline ml-1 hover:text-blue-900 transition-colors"
           >
             Crear cuenta
           </Link>
         </div>
 
-        <div className="text-[0.7rem] text-slate-400 font-medium tracking-wide uppercase text-center mt-10">
-          © 2024 VIBRA SHOP. ELECTRIC EDITORIAL. TODOS LOS DERECHOS RESERVADOS.
+        <div className="text-[0.65rem] text-slate-300 font-medium tracking-widest uppercase text-center mt-8">
+          © 2024 VIBRA SHOP · ELECTRIC EDITORIAL · TODOS LOS DERECHOS RESERVADOS
         </div>
       </div>
     </AuthLayout>

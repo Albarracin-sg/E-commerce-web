@@ -23,54 +23,66 @@ export default function AuthLayout({
   badge,
 }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen bg-[#f8f9fc] font-sans">
-      {/* Left side banner — Desktop only */}
-      <div className="hidden lg:flex relative w-1/2 overflow-hidden bg-black flex-col justify-center p-[60px]">
-        <img
-          src={backgroundImage}
-          className="absolute top-0 left-0 w-full h-full object-cover opacity-90 z-[1]"
-          alt="Background"
-        />
-        <div
-          className="absolute top-0 left-0 w-full h-full z-[2]"
-          style={{
-            background:
-              gradient ||
-              "linear-gradient(135deg, rgba(30, 20, 100, 0.4), rgba(10, 50, 160, 0.7))",
-          }}
-        />
+    <div className="flex h-screen overflow-hidden bg-[#eef0f8] font-sans items-center justify-center p-4 sm:p-6">
+      {/* Outer card wrapper */}
+      <div className="w-full max-w-[960px] flex rounded-3xl overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.12)] h-full max-h-[680px]">
 
-        {badge && (
+        {/* Left side banner — Desktop only */}
+        <div className="hidden lg:flex relative w-[45%] flex-shrink-0 overflow-hidden bg-black">
+          <img
+            src={backgroundImage}
+            className="absolute inset-0 w-full h-full object-cover opacity-90 z-[1]"
+            alt="Background"
+          />
+          {/* Dark gradient overlay for readability */}
           <div
-            className={`inline-block ${
-              badge.color || "bg-white/15 backdrop-blur-xl"
-            } py-2 px-4 rounded-lg mb-8 font-display italic font-extrabold tracking-wide z-[3]`}
-          >
-            {badge.text}
-          </div>
-        )}
+            className="absolute inset-0 z-[2]"
+            style={{
+              background:
+                gradient ||
+                "linear-gradient(160deg, rgba(20,10,80,0.55) 0%, rgba(10,40,160,0.72) 100%)",
+            }}
+          />
 
-        <div className="relative z-[3] text-white my-auto">
-          <h1 className="font-display text-[4.5rem] font-extrabold leading-[1.05] m-0 mb-6 drop-shadow-lg">
-            {sideTitle}
-          </h1>
-          {sideSubtitle && (
-            <p className="text-lg leading-relaxed max-w-[450px] opacity-95 drop-shadow-md">
-              {sideSubtitle}
-            </p>
-          )}
+          {/* Centered content group */}
+          <div className="relative z-[3] flex flex-col justify-center px-10 py-12 w-full h-full">
+            {/* Badge */}
+            {badge && (
+              <div
+                className={`self-start inline-flex items-center ${
+                  badge.color || "bg-white/20 backdrop-blur-xl text-white"
+                } py-1.5 px-4 rounded-lg mb-6 font-display italic font-extrabold tracking-widest text-sm uppercase`}
+              >
+                {badge.text}
+              </div>
+            )}
+
+            {/* Title */}
+            <h1 className="font-display text-[3.6rem] font-extrabold leading-[1.08] text-white m-0 mb-5 drop-shadow-lg">
+              {sideTitle}
+            </h1>
+
+            {/* Subtitle */}
+            {sideSubtitle && (
+              <p className="text-[1rem] leading-relaxed text-white/80 max-w-[280px] drop-shadow-md m-0">
+                {sideSubtitle}
+              </p>
+            )}
+
+            {/* Bottom text */}
+            {sideBottom && (
+              <div className="absolute bottom-8 left-10 text-[0.65rem] text-white/40 font-medium tracking-widest uppercase">
+                {sideBottom}
+              </div>
+            )}
+          </div>
         </div>
 
-        {sideBottom && (
-          <div className="absolute bottom-10 left-[60px] text-[0.7rem] text-white/50 font-medium tracking-wide uppercase z-[3]">
-            {sideBottom}
-          </div>
-        )}
-      </div>
+        {/* Right side — form area */}
+        <div className="flex-1 flex flex-col items-center justify-center bg-white px-6 py-6 sm:px-10 overflow-y-auto">
+          {children}
+        </div>
 
-      {/* Right side */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-5 py-10 relative">
-        {children}
       </div>
     </div>
   );

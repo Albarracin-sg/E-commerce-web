@@ -16,20 +16,44 @@
   * {
     box-sizing: border-box;
   }
+
+  /* Remove default focus outline in favour of custom ring on inputs */
+  input:focus-visible {
+    outline: none;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
-/* Custom checkbox checked state - not possible with pure Tailwind */
 @layer components {
+  /* ── Custom checkbox ─────────────────────────────────────────────────── */
   .custom-checkbox {
-    @apply appearance-none w-5 h-5 rounded-md bg-violet-100 border-[1.5px] border-transparent cursor-pointer relative flex-shrink-0 mt-0.5;
+    @apply appearance-none w-5 h-5 rounded-md bg-blue-50 border-2 border-slate-200 cursor-pointer relative flex-shrink-0 mt-0.5 transition-all duration-150;
   }
 
   .custom-checkbox:checked {
-    @apply bg-indigo-500;
+    @apply bg-blue-500 border-blue-500;
   }
 
   .custom-checkbox:checked::after {
     content: '✓';
     @apply absolute text-white text-[13px] font-bold top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+  }
+
+  .custom-checkbox:focus-visible {
+    @apply ring-2 ring-blue-400 ring-offset-1;
+  }
+
+  /* ── Submit button hover glow ────────────────────────────────────────── */
+  .btn-primary-glow:hover:not(:disabled) {
+    box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary-glow:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
   }
 }

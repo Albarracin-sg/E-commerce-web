@@ -95,11 +95,11 @@ export default function Register() {
         color: "bg-[#ff8fa3] text-white",
       }}
     >
-      <div className="w-full max-w-[480px] bg-white rounded-3xl p-12 shadow-[0_20px_60px_rgba(0,0,0,0.05)] max-sm:p-8 max-sm:px-6 max-sm:shadow-none max-sm:rounded-none max-sm:max-w-full">
-        <h2 className="text-[2rem] font-display font-bold text-slate-800 mb-2.5 tracking-tight">
+      <div className="w-full max-w-[480px] bg-white rounded-3xl px-10 py-6 shadow-[0_20px_60px_rgba(0,0,0,0.05)] max-sm:px-6 max-sm:py-6 max-sm:shadow-none max-sm:rounded-none max-sm:max-w-full">
+        <h2 className="text-[1.7rem] font-display font-bold text-slate-800 mb-1 tracking-tight">
           Crea tu cuenta
         </h2>
-        <p className="text-slate-500 text-[0.95rem] mb-8">
+        <p className="text-slate-500 text-[0.88rem] mb-5">
           Introduce tus datos para empezar la experiencia.
         </p>
 
@@ -189,7 +189,7 @@ export default function Register() {
 
           {/* Términos y condiciones */}
           <label
-            className="flex items-start gap-3 my-6 cursor-pointer"
+            className="flex items-start gap-3 mt-3 mb-4 cursor-pointer"
             htmlFor="reg-terms"
           >
             <input
@@ -197,7 +197,7 @@ export default function Register() {
               type="checkbox"
               checked={fields.acceptedTerms}
               onChange={set("acceptedTerms")}
-              className="mt-1 w-4 h-4 cursor-pointer"
+              className="custom-checkbox mt-0.5"
             />
             <div className="text-[0.85rem] text-slate-500 leading-relaxed">
               Acepto los{" "}
@@ -239,7 +239,7 @@ export default function Register() {
           </Link>
         </div>
 
-        <div className="flex gap-5 justify-center mt-auto pt-10 text-xs font-bold text-slate-400 uppercase tracking-wide">
+        <div className="flex gap-5 justify-center mt-auto pt-5 text-xs font-bold text-slate-400 uppercase tracking-wide">
           <Link to="#" className="text-slate-400 no-underline">
             Soporte
           </Link>

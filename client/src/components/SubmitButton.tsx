@@ -15,7 +15,7 @@ export default function SubmitButton({
     <button
       type="submit"
       id={id}
-      className="w-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white border-none rounded-xl py-4 text-base font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-indigo-500/30 flex items-center justify-center gap-2 active:enabled:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:shadow-none"
+      className="btn-primary-glow w-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white border-none rounded-xl py-4 text-base font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none"
       disabled={disabled}
     >
       {isSubmitting ? (
