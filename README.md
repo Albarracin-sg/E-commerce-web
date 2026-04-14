@@ -162,3 +162,4 @@ ecommerce-vibe-pulse/
 │       └── services/  # Lógica con bcrypt y Prisma
 └── README.md
 ```
+..

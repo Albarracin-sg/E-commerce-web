@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { createUser, findUserByEmail } from "../services/userService";
-import { Role } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 import { isValidEmail } from "./authControllerLogin";
 
@@ -43,7 +42,7 @@ export async function register(req: Request, res: Response): Promise<Response> {
     }
 
     const role =
-      email.toLowerCase().trim() === ADMIN_EMAIL ? Role.ADMIN : Role.CLIENT;
+      email.toLowerCase().trim() === ADMIN_EMAIL ? "ADMIN" : "CLIENT";
 
     const user = await createUser(name.trim(), email.toLowerCase().trim(), password, role);
 

@@ -90,3 +90,4 @@ export { default as DashboardCard } from "./DashboardCard";
 ✅ Código más limpio y reutilizable
 ✅ Sin archivos duplicados
 ✅ Estructura modular y escalable
+.
