@@ -8,7 +8,7 @@ export default function SocialButtons() {
       <div className="flex gap-4">
         <button
           type="button"
-          className="flex-1 flex items-center justify-center gap-2.5 bg-violet-100 border border-transparent rounded-xl py-3.5 text-[0.95rem] font-semibold text-slate-800 cursor-pointer transition-all duration-200 hover:bg-indigo-100 disabled:opacity-50"
+          className="flex-1 flex items-center justify-center gap-2.5 bg-[#E4E4FF]/40 border border-transparent rounded-xl py-3.5 text-[0.95rem] font-semibold text-slate-800 cursor-pointer transition-all duration-200 hover:bg-[#E4E4FF]/60 disabled:opacity-50"
           disabled
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -33,7 +33,7 @@ export default function SocialButtons() {
         </button>
         <button
           type="button"
-          className="flex-1 flex items-center justify-center gap-2.5 bg-violet-100 border border-transparent rounded-xl py-3.5 text-[0.95rem] font-semibold text-slate-800 cursor-pointer transition-all duration-200 hover:bg-indigo-100 disabled:opacity-50"
+          className="flex-1 flex items-center justify-center gap-2.5 bg-[#E4E4FF]/40 border border-transparent rounded-xl py-3.5 text-[0.95rem] font-semibold text-slate-800 cursor-pointer transition-all duration-200 hover:bg-[#E4E4FF]/60 disabled:opacity-50"
           disabled
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
