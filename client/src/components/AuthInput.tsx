@@ -19,9 +19,9 @@ interface AuthInputProps {
 }
 
 const inputBase =
-  "w-full bg-slate-100 border-2 border-transparent rounded-xl py-2.5 pr-11 pl-11 text-[0.93rem] text-slate-800 outline-none font-medium transition-all duration-200 placeholder:text-slate-400 placeholder:font-normal " +
+  "w-full bg-[#E4E4FF]/40 border-2 border-transparent rounded-xl py-2.5 pr-11 pl-11 text-[0.93rem] text-slate-800 outline-none font-medium transition-all duration-200 placeholder:text-slate-400 placeholder:font-normal " +
   /* Focus ring */
-  "focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10";
+  "focus:bg-white focus:border-[#5272F5] focus:ring-4 focus:ring-[#5272F5]/10";
 
 const inputError =
   "border-red-400 bg-red-50/60 focus:border-red-400 focus:ring-red-400/15";

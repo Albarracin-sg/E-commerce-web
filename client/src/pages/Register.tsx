@@ -95,10 +95,9 @@ export default function Register() {
         color: "bg-[#ff8fa3] text-white",
       }}
     >
-      <div className="flex flex-col w-full max-w-[480px] h-full justify-center">
-        {/* White Card */}
-        <div className="bg-white rounded-3xl px-8 py-5 shadow-xl w-full">
-          <h2 className="text-[1.7rem] font-display font-bold text-slate-800 mb-0.5 tracking-tight">
+      <div className="flex flex-col w-full max-w-[440px] justify-center mx-auto">
+        <div className="w-full">
+          <h2 className="text-[1.8rem] font-display font-bold text-slate-800 mb-1 tracking-tight">
             Crea tu cuenta
           </h2>
           <p className="text-[0.85rem] text-slate-500 mb-4">
@@ -244,19 +243,6 @@ export default function Register() {
               Inicia sesión
             </Link>
           </div>
-        </div>
-
-        {/* Footer outside the card */}
-        <div className="flex gap-5 justify-center mt-5 text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest pb-2">
-          <Link to="#" className="text-slate-400 no-underline hover:text-slate-600 transition-colors">
-            Soporte
-          </Link>
-          <Link to="#" className="text-slate-400 no-underline hover:text-slate-600 transition-colors">
-            Privacidad
-          </Link>
-          <Link to="#" className="text-slate-400 no-underline hover:text-slate-600 transition-colors">
-            Ayuda
-          </Link>
         </div>
       </div>
     </AuthLayout>

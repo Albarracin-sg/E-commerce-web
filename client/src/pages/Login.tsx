@@ -74,9 +74,8 @@ export default function Login() {
       sideBottom="ELECTRIC EDITORIAL © 2024"
       badge={{ text: "VIBRA SHOP" }}
     >
-      <div className="flex flex-col w-full max-w-[420px] h-full justify-center">
-        {/* White Card */}
-        <div className="bg-white rounded-3xl px-8 py-6 shadow-xl w-full">
+      <div className="flex flex-col w-full max-w-[400px] justify-center mx-auto">
+        <div className="w-full">
           <h2 className="text-[2rem] font-display font-bold text-slate-800 mb-2 tracking-tight">
             Bienvenido.
           </h2>
@@ -166,11 +165,6 @@ export default function Login() {
               Crear cuenta
             </Link>
           </div>
-        </div>
-
-        {/* Footer outside the card */}
-        <div className="text-[0.65rem] text-slate-400 font-medium tracking-widest uppercase text-center mt-5 pb-2">
-          © 2024 VIBRA SHOP · ELECTRIC EDITORIAL · TODOS LOS DERECHOS RESERVADOS
         </div>
       </div>
     </AuthLayout>
