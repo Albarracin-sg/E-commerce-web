@@ -3,17 +3,14 @@ import Home from "../pages/Home";
 import Admin from "../pages/Admin";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import { useProtectedRoute } from "../hooks";
 import { getAuth } from "../utils/auth";
 
 function ProtectedRoute({ children, role }: { children: JSX.Element; role: "CLIENT" | "ADMIN" }) {
-  const auth = getAuth();
+  const { isAuthorized, redirectTo } = useProtectedRoute(role);
 
-  if (!auth) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (auth.role !== role) {
-    return <Navigate to={auth.role === "ADMIN" ? "/admin" : "/home"} replace />;
+  if (!isAuthorized && redirectTo) {
+    return <Navigate to={redirectTo} replace />;
   }
 
   return children;
