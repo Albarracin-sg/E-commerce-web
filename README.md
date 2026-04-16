@@ -4,7 +4,7 @@ Aplicación web de e-commerce de ropa juvenil. Este repositorio contiene el Spri
 
 ## Tecnologías
 
-- **Frontend:** React 18 + Vite + TypeScript
+- **Frontend:** React 18 + Vite + TypeScript + Tailwind CSS
 - **Backend:** Node.js + Express + TypeScript
 - **Base de datos:** PostgreSQL + Prisma ORM
 - **Seguridad:** bcrypt para contraseñas
@@ -300,12 +300,15 @@ curl -X GET http://localhost:4000/api/auth/me \
 ```
 ecommerce-vibe-pulse/
 ├── client/            # Frontend
-│   └── src/
-│       ├── assets/    # Imágenes
-│       ├── pages/     # Login, Register, Home, Admin
-│       ├── routes/    # Rutas protegidas
-│       ├── services/  # Llamadas a la API
-│       └── utils/     # Manejo de sesión (localStorage)
+│   ├── public/        # Recursos estáticos (ej. logo.png como favicon)
+│   ├── src/
+│   │   ├── assets/    # Imágenes y recursos internos
+│   │   ├── pages/     # Login, Register, Home, Admin
+│   │   ├── routes/    # Rutas protegidas
+│   │   ├── services/  # Llamadas a la API
+│   │   └── utils/     # Manejo de sesión (localStorage)
+│   ├── tailwind.config.js # Configuración de Tailwind CSS
+│   └── vite.config.ts   # Configuración de Vite (incluye setup de PostCSS para Tailwind)
 ├── server/            # Backend
 │   ├── prisma/        # Schema de la base de datos
 │   └── src/
