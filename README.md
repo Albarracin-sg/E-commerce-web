@@ -152,30 +152,41 @@ Una vez que tanto el backend como el frontend están corriendo:
   - Si el rol es `CLIENT` → redirige a `/home`.
   - Si el rol es `ADMIN` → redirige a `/admin`.
 
-### Crear una cuenta de administrador
+### Crear una cuenta de administrador (Paso a paso)
 
-Los usuarios registrados desde `/register` se crean siempre con rol `CLIENT`.
+Los usuarios registrados desde la web (`/register`) se crean siempre con el rol `CLIENT`. Por seguridad, las cuentas con privilegios de **ADMIN** se gestionan exclusivamente desde el servidor.
 
-> **Las cuentas ADMIN deben crearse mediante una seed de Prisma o un proceso administrativo controlado.**
+> **Regla de Oro:** Las cuentas ADMIN deben crearse mediante una seed de Prisma o un proceso administrativo controlado.
 
-#### ¿Por qué?
-Es una recomendación de seguridad crítica porque un ADMIN:
-- **No debe salir desde `/register`**: Previene registros accidentales o ataques de fuerza bruta.
-- **No debe depender de un email "especial"**: Evita lógica "mágica" en el frontend o backend basada en strings.
-- **No debe quedar librado a lógica de frontend o atajos**: El control debe ser absoluto desde la infraestructura.
+#### Pasos para generar el administrador inicial:
 
-#### Pasos para crear un Admin
-Hemos preparado un script de seed para inicializar la cuenta de administrador de forma segura.
+1.  **Entra a la carpeta del servidor:**
+    ```bash
+    cd server
+    ```
 
-1.  Asegúrate de estar en el directorio `server`.
-2.  Ejecuta el comando de seed:
+2.  **Ejecuta el comando de Seed:**
+    Este comando activa el script automatizado que inserta el administrador en la base de datos.
+    ```bash
+    npx prisma db seed
+    ```
 
-```bash
-cd server
-npx prisma db seed
-```
+3.  **Verificar el resultado:**
+    Deberías ver un mensaje en consola confirmando: `Admin user creado/actualizado: admin@vibepulse.com`.
 
-Este comando creará (o actualizará si ya existe) el usuario `admin@vibepulse.com` con el rol `ADMIN`. El proceso es seguro ya que hashea la contraseña automáticamente. Puedes modificar las credenciales en `server/prisma/seed.ts`.
+#### Credenciales por defecto (Generadas por el Seed):
+Una vez ejecutado el comando, usa estos datos para entrar al panel de administración:
+- **Email:** `admin@vibepulse.com`
+- **Contraseña:** `AdminPassword123!`
+
+*Nota: Para cambiar estas credenciales, edita el archivo `server/prisma/seed.ts` y vuelve a ejecutar el comando `npx prisma db seed`.*
+
+---
+
+#### ¿Por qué este método? (Mejores prácticas)
+- **Cero registros públicos:** Evitamos que cualquier usuario se asigne el rol de ADMIN desde el navegador.
+- **Contraseñas Seguras:** El script hashea la contraseña automáticamente usando `bcrypt` antes de guardarla.
+- **Sin Lógica "Mágica":** No dependemos de que el sistema "detecte" emails que terminen en `@admin.com`, evitando vulnerabilidades.
 
 ---
 
