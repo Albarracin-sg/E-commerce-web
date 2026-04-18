@@ -1,8 +1,10 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import Home from "../pages/Home";
 import Admin from "../pages/Admin";
 import Catalog from "../pages/Catalog";
 import ProductDetail from "../pages/ProductDetail";
+import Cart from "../pages/Cart";
+import Checkout from "../pages/Checkout";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import { getAuth } from "../utils/auth";
@@ -32,6 +34,11 @@ function RootRedirect() {
   return <Navigate to={auth.role === "ADMIN" ? "/admin" : "/home"} replace />;
 }
 
+function LegacyProductRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/products/${id ?? ""}`} replace />;
+}
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -40,7 +47,11 @@ export default function AppRoutes() {
       <Route path="/register" element={<GuestOnly><Register /></GuestOnly>} />
       <Route path="/home" element={<RequireAuth><Home /></RequireAuth>} />
       <Route path="/catalogo" element={<RequireAuth><Catalog /></RequireAuth>} />
-      <Route path="/producto/:id" element={<RequireAuth><ProductDetail /></RequireAuth>} />
+      <Route path="/products/:id" element={<RequireAuth><ProductDetail /></RequireAuth>} />
+      <Route path="/producto/:id" element={<LegacyProductRedirect />} />
+      <Route path="/cart" element={<RequireAuth><Cart /></RequireAuth>} />
+      <Route path="/carrito" element={<Navigate to="/cart" replace />} />
+      <Route path="/checkout" element={<RequireAuth><Checkout /></RequireAuth>} />
       <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

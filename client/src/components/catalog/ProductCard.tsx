@@ -22,8 +22,8 @@ export default function ProductCard({ product }: Props) {
         src={product.imageUrl}
         alt={product.name}
         className="aspect-[4/3] w-full object-cover"
-        onError={(e) => {
-          (e.target as HTMLImageElement).src =
+        onError={(event) => {
+          (event.target as HTMLImageElement).src =
             "https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=700&q=80";
         }}
       />
@@ -37,7 +37,7 @@ export default function ProductCard({ product }: Props) {
         <p className="text-lg font-extrabold text-slate-900">{formatPrice(product.price)}</p>
         <button
           className="w-full rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-700"
-          onClick={() => navigate(`/producto/${product.id}`)}
+          onClick={() => navigate(`/products/${product.id}`)}
         >
           Ver detalle
         </button>

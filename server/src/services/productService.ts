@@ -55,7 +55,7 @@ export async function findProducts(filters: ProductQueryFilters) {
   const [data, total] = await Promise.all([
     prisma.product.findMany({
       where,
-      include: { category: true },
+      include: { category: true, variants: true },
       skip,
       take: filters.limit,
       orderBy: { createdAt: "desc" },
@@ -75,14 +75,14 @@ export async function findProducts(filters: ProductQueryFilters) {
 export function findProductById(id: number) {
   return prisma.product.findUnique({
     where: { id },
-    include: { category: true },
+    include: { category: true, variants: true },
   });
 }
 
 export function findFeaturedProducts(limit = 8) {
   return prisma.product.findMany({
     where: { featured: true },
-    include: { category: true },
+    include: { category: true, variants: true },
     orderBy: { createdAt: "desc" },
     take: limit,
   });

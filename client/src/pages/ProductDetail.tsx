@@ -1,6 +1,8 @@
+import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import MainStoreLayout from "../layouts/MainStoreLayout";
+import { useCart } from "../context/CartContext";
 import { useProduct } from "../hooks/useCatalog";
+import MainStoreLayout from "../layouts/MainStoreLayout";
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("es-CO", {
@@ -10,12 +12,59 @@ function formatPrice(value: number) {
   }).format(value);
 }
 
+const DEFAULT_COLORS = ["Negro", "Blanco", "Azul", "Rojo", "Verde"];
+const DEFAULT_SIZES = ["XS", "S", "M", "L", "XL"];
+const NO_SIZE_CATEGORIES = ["Accesorios", "Bolsos"];
+
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { addItem, items } = useCart();
 
   const parsedId = Number(id);
   const { product, loading, error } = useProduct(parsedId);
+
+  const [selectedColor, setSelectedColor] = useState<string>(DEFAULT_COLORS[0]);
+  const [selectedSize, setSelectedSize] = useState<string>(DEFAULT_SIZES[2]);
+  const [submitting, setSubmitting] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const needsSize = useMemo(() => {
+    const category = product?.category?.name;
+    return category ? !NO_SIZE_CATEGORIES.includes(category) : true;
+  }, [product?.category?.name]);
+
+  const qtyInCart = items
+    .filter(
+      (item) =>
+        item.productId === product?.id &&
+        (item.color ?? "") === selectedColor &&
+        (item.size ?? "") === (needsSize ? selectedSize : "")
+    )
+    .reduce((acc, item) => acc + item.quantity, 0);
+
+  const availableStock = product?.stock ?? 0;
+  const stockReached = availableStock > 0 && qtyInCart >= availableStock;
+
+  async function handleAddToCart() {
+    if (!product) return;
+
+    try {
+      setSubmitting(true);
+      setActionError(null);
+
+      await addItem({
+        productId: product.id,
+        quantity: 1,
+        color: selectedColor,
+        size: needsSize ? selectedSize : undefined,
+      });
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "No se pudo agregar al carrito");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <MainStoreLayout>
@@ -34,8 +83,8 @@ export default function ProductDetail() {
           <div className="grid gap-5 md:grid-cols-2">
             <div className="aspect-[4/3] animate-pulse rounded-xl bg-slate-200" />
             <div className="space-y-3 rounded-xl border bg-white p-6">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-4 animate-pulse rounded bg-slate-200" />
+              {Array.from({ length: 5 }).map((_, index) => (
+                <div key={index} className="h-4 animate-pulse rounded bg-slate-200" />
               ))}
             </div>
           </div>
@@ -60,8 +109,8 @@ export default function ProductDetail() {
               src={product.imageUrl}
               alt={product.name}
               className="aspect-[4/3] w-full rounded-xl border object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src =
+              onError={(event) => {
+                (event.target as HTMLImageElement).src =
                   "https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=700&q=80";
               }}
             />
@@ -78,9 +127,7 @@ export default function ProductDetail() {
               <div className="mt-5 flex items-center gap-3">
                 <p className="text-3xl font-extrabold text-slate-900">{formatPrice(product.price)}</p>
                 {product.comparePrice && (
-                  <p className="text-lg text-slate-400 line-through">
-                    {formatPrice(product.comparePrice)}
-                  </p>
+                  <p className="text-lg text-slate-400 line-through">{formatPrice(product.comparePrice)}</p>
                 )}
               </div>
 
@@ -88,12 +135,65 @@ export default function ProductDetail() {
                 Stock disponible: <strong>{product.stock}</strong>
               </div>
 
+              <div className="mt-5">
+                <p className="mb-2 text-xs font-semibold uppercase text-slate-500">Color</p>
+                <div className="flex flex-wrap gap-2">
+                  {DEFAULT_COLORS.map((color) => (
+                    <button
+                      key={color}
+                      className={`rounded border px-3 py-1.5 text-sm ${selectedColor === color ? "border-slate-900 bg-slate-900 text-white" : "hover:bg-slate-100"}`}
+                      onClick={() => setSelectedColor(color)}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {needsSize && (
+                <div className="mt-4">
+                  <p className="mb-2 text-xs font-semibold uppercase text-slate-500">Talla</p>
+                  <div className="flex flex-wrap gap-2">
+                    {DEFAULT_SIZES.map((size) => (
+                      <button
+                        key={size}
+                        className={`rounded border px-3 py-1.5 text-sm ${selectedSize === size ? "border-slate-900 bg-slate-900 text-white" : "hover:bg-slate-100"}`}
+                        onClick={() => setSelectedSize(size)}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {stockReached && (
+                <p className="mt-3 text-xs font-semibold text-amber-600">
+                  Ya agregaste el máximo disponible de esta combinación.
+                </p>
+              )}
+              {actionError && <p className="mt-3 text-xs font-semibold text-rose-600">{actionError}</p>}
+
               <button
-                className="mt-5 w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white opacity-70"
-                disabled
+                className="mt-5 w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={product.stock <= 0 || stockReached || submitting}
+                onClick={() => void handleAddToCart()}
               >
-                Agregar al carrito (Sprint 3)
+                {submitting
+                  ? "Agregando..."
+                  : product.stock <= 0
+                    ? "Producto agotado"
+                    : stockReached
+                      ? "Límite alcanzado"
+                      : "Agregar al carrito"}
               </button>
+
+              <Link
+                to="/cart"
+                className="mt-3 inline-block text-sm font-semibold text-rose-600 hover:underline"
+              >
+                Ver carrito
+              </Link>
             </div>
           </div>
         )}

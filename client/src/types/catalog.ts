@@ -7,6 +7,16 @@ export interface Category {
   productCount?: number;
 }
 
+export interface ProductVariant {
+  id: number;
+  name: string;
+  color?: string | null;
+  size?: string | null;
+  price: number;
+  stock: number;
+  productId: number;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -19,6 +29,7 @@ export interface Product {
   badge?: string | null;
   categoryId: number;
   category?: Category;
+  variants?: ProductVariant[];
   createdAt: string;
 }
 

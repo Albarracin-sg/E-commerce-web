@@ -5,6 +5,7 @@ import type {
   Product,
   ProductFilters,
 } from "../types/catalog";
+import type { Cart } from "../types/cart";
 
 export type LoginPayload = {
   email: string;
@@ -43,7 +44,6 @@ const api = axios.create({
   },
 });
 
-// Interceptor para agregar el token JWT a todas las requests
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("vibe-pulse-token");
@@ -52,25 +52,29 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
+
+function mapApiError(error: unknown): Error {
+  if (axios.isAxiosError(error) && error.response) {
+    if (error.response.status === 429) {
+      return new Error("Exceso de peticiones, espere un momento");
+    }
+
+    const errData = error.response.data?.error;
+    const errorMessage = typeof errData === "object" ? errData.message : errData;
+    return new Error(errorMessage || "Error de servidor");
+  }
+
+  return new Error("Error de conexión con el servidor");
+}
 
 async function request<T>(path: string, body: object): Promise<T> {
   try {
     const { data } = await api.post<T>(path, body);
     return data;
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      if (error.response.status === 429) {
-        throw new Error("Exceso de peticiones, espere un momento");
-      }
-      const errData = error.response.data?.error;
-      const errorMessage = typeof errData === "object" ? errData.message : errData;
-      throw new Error(errorMessage || "Error de servidor");
-    }
-    throw new Error("Error de conexión con el servidor");
+    throw mapApiError(error);
   }
 }
 
@@ -79,17 +83,12 @@ async function requestGet<T>(path: string, params?: Record<string, unknown>): Pr
     const { data } = await api.get<T>(path, { params });
     return data;
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      const errData = error.response.data?.error;
-      const errorMessage = typeof errData === "object" ? errData.message : errData;
-      throw new Error(errorMessage || "Error de servidor");
-    }
-    throw new Error("Error de conexión con el servidor");
+    throw mapApiError(error);
   }
 }
 
 async function requestAuth<T>(
-  method: "post" | "put" | "delete",
+  method: "post" | "put" | "patch" | "delete",
   path: string,
   body?: object
 ): Promise<T> {
@@ -101,12 +100,7 @@ async function requestAuth<T>(
     });
     return data;
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      const errData = error.response.data?.error;
-      const errorMessage = typeof errData === "object" ? errData.message : errData;
-      throw new Error(errorMessage || "Error de servidor");
-    }
-    throw new Error("Error de conexión con el servidor");
+    throw mapApiError(error);
   }
 }
 
@@ -119,7 +113,10 @@ export function registerRequest(payload: RegisterPayload) {
 }
 
 export function getProductsRequest(filters: ProductFilters = {}) {
-  return requestGet<{ success: boolean } & PaginatedResponse<Product>>("/api/products", filters as Record<string, unknown>);
+  return requestGet<{ success: boolean } & PaginatedResponse<Product>>(
+    "/api/products",
+    filters as Record<string, unknown>
+  );
 }
 
 export function getFeaturedProductsRequest() {
@@ -176,4 +173,26 @@ export function updateProductRequest(
 
 export function deleteProductRequest(id: number) {
   return requestAuth<{ success: boolean; message: string }>("delete", `/api/products/${id}`);
+}
+
+export function getCartRequest() {
+  return requestGet<ApiResponse<Cart>>("/api/cart");
+}
+
+export function addCartItemRequest(payload: {
+  productId: number;
+  quantity?: number;
+  variantId?: number;
+  color?: string;
+  size?: string;
+}) {
+  return requestAuth<ApiResponse<Cart>>("post", "/api/cart/items", payload);
+}
+
+export function updateCartItemRequest(itemId: number, payload: { quantity: number }) {
+  return requestAuth<ApiResponse<Cart>>("patch", `/api/cart/items/${itemId}`, payload);
+}
+
+export function removeCartItemRequest(itemId: number) {
+  return requestAuth<ApiResponse<Cart>>("delete", `/api/cart/items/${itemId}`);
 }

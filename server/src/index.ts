@@ -4,10 +4,12 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth";
 import productRoutes from "./routes/products";
 import categoryRoutes from "./routes/categories";
+import cartRoutes from "./routes/cart";
 import {
   logger,
   errorHandler,
   rateLimiter,
+  authenticateToken,
 } from "./middlewares";
 
 dotenv.config();
@@ -16,34 +18,25 @@ const app = express();
 const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 
 // ==================== MIDDLEWARES GLOBALES ====================
-
-// Permitimos cualquier puerto de localhost (5173, 5174, etc.) en desarrollo
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: clientOrigin, credentials: true }));
 app.use(express.json());
-
-// Middleware de logging de todas las solicitudes
 app.use(logger);
-
-// Middleware de rate limiting global (100 solicitudes por minuto)
 app.use(rateLimiter(100, 60000));
 
 // ==================== RUTAS ====================
-
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/cart", authenticateToken, cartRoutes);
 
 app.get("/api/health", (_req: Request, res: Response) => {
-  res.json({ status: "ok", message: "Authentication API is running" });
+  res.json({ status: "ok", message: "API is running" });
 });
 
 // ==================== ERROR HANDLER ====================
-
-// Debe estar al final, después de todas las rutas
 app.use(errorHandler);
 
 // ==================== SERVIDOR ====================
-
 const port = Number(process.env.PORT) || 3000;
 app.listen(port, () => {
   console.log(`Server listening on http://localhost:${port}`);
