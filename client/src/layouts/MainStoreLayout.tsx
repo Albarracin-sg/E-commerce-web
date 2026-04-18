@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { FormEvent, ReactNode, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../hooks";
 
@@ -11,6 +11,19 @@ export default function MainStoreLayout({ children }: Props) {
   const { user, logout } = useAuth();
   const { totalItems } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setSearch(params.get("search") ?? "");
+  }, [location.search]);
+
+  function handleSearchSubmit(e: FormEvent) {
+    e.preventDefault();
+    const query = search.trim();
+    navigate(query ? `/catalogo?search=${encodeURIComponent(query)}` : "/catalogo");
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -24,20 +37,14 @@ export default function MainStoreLayout({ children }: Props) {
               <Link className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100" to="/home">
                 Inicio
               </Link>
-              <Link
-                className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100"
-                to="/catalogo"
-              >
+              <Link className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100" to="/catalogo">
                 Catálogo
               </Link>
               <Link className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100" to="/cart">
                 Carrito
               </Link>
               {user?.role === "ADMIN" && (
-                <Link
-                  className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100"
-                  to="/admin"
-                >
+                <Link className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100" to="/admin">
                   Admin
                 </Link>
               )}
@@ -45,6 +52,18 @@ export default function MainStoreLayout({ children }: Props) {
           </div>
 
           <div className="flex items-center gap-2">
+            <form onSubmit={handleSearchSubmit} className="hidden items-center gap-2 rounded-md border bg-white px-2 py-1 md:flex">
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar..."
+                className="w-40 border-none bg-transparent text-sm outline-none"
+              />
+              <button className="rounded px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100" type="submit">
+                Ir
+              </button>
+            </form>
+
             <button
               onClick={() => navigate("/catalogo")}
               className="rounded-md bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-700"

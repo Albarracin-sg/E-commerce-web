@@ -8,6 +8,7 @@ import MainStoreLayout from "../layouts/MainStoreLayout";
 export default function Catalog() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [sort, setSort] = useState("default");
+  const [filtersOpen, setFiltersOpen] = useState(true);
 
   const initialCategoryId = searchParams.get("categoryId");
   const initialSearch = searchParams.get("search");
@@ -46,7 +47,24 @@ export default function Catalog() {
     <MainStoreLayout>
       <section className="mx-auto max-w-7xl px-4 py-8">
         <div className="mb-5 flex items-center justify-between">
-          <h1 className="text-3xl font-extrabold text-slate-900">Catálogo</h1>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setFiltersOpen((prev) => !prev)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border bg-white text-lg font-bold text-slate-600 hover:bg-slate-50"
+              title={filtersOpen ? "Ocultar filtros" : "Mostrar filtros"}
+              aria-label={filtersOpen ? "Ocultar filtros" : "Mostrar filtros"}
+            >
+              ☰
+            </button>
+            <div>
+              <h1 className="text-3xl font-extrabold text-slate-900">Catálogo</h1>
+              {filters.search && (
+                <p className="text-sm text-slate-500">Resultados para: <b>{filters.search}</b></p>
+              )}
+            </div>
+          </div>
+
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
@@ -59,12 +77,14 @@ export default function Catalog() {
           </select>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-[270px_minmax(0,1fr)]">
-          <CatalogFilters
-            categories={categories}
-            filters={filters}
-            onFilterChange={updateFilters}
-          />
+        <div className={`grid gap-5 ${filtersOpen ? "lg:grid-cols-[270px_minmax(0,1fr)]" : "grid-cols-1"}`}>
+          {filtersOpen && (
+            <CatalogFilters
+              categories={categories}
+              filters={filters}
+              onFilterChange={updateFilters}
+            />
+          )}
 
           <div className="space-y-4">
             {error && <p className="rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</p>}

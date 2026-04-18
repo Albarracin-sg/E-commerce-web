@@ -1,4 +1,4 @@
-﻿# Integración Sprint 3 — Detalle de producto y carrito
+# Integración Sprint 3 — Detalle de producto y carrito
 
 ## Rama de trabajo
 - `feat/integracion-sprint3-carrito`
@@ -150,3 +150,22 @@ git push -u origin feat/integracion-sprint3-carrito
 ## 6) Estado final
 
 La rama `feat/integracion-sprint3-carrito` queda con la integración del Sprint 3 lista para revisión y PR hacia `main`, con backend + frontend + modelo de datos alineados y pruebas locales completadas.
+
+---
+
+## 7) Ajustes UI/UX finales solicitados
+
+Se completaron mejoras específicas de interfaz pedidas durante la validación manual:
+
+- Sidebar de filtros controlado desde botón tipo menú (`☰`) en la cabecera del catálogo.
+  - Permite **mostrar/ocultar** el panel de filtros lateral sin romper el grid de productos.
+  - Archivo: `client/src/pages/Catalog.tsx`
+
+- Barra de búsqueda del header conectada al catálogo.
+  - El input ahora navega a `/catalogo?search=...`.
+  - El catálogo toma ese query param y aplica filtro real en productos.
+  - Archivos:
+    - `client/src/layouts/MainStoreLayout.tsx`
+    - `client/src/pages/Catalog.tsx`
+
+Con esto, la UI queda alineada con lo esperado en la revisión visual: búsqueda utilizable desde navbar y filtros desplegables/controlables desde el icono lateral.
