@@ -6,6 +6,7 @@ import type {
   ProductFilters,
 } from "../types/catalog";
 import type { Cart } from "../types/cart";
+import type { CheckoutFormData } from "../types/checkout";
 
 export type LoginPayload = {
   email: string;
@@ -26,6 +27,33 @@ export type AuthResponse = {
     name: string;
     email: string;
     role: "CLIENT" | "ADMIN";
+  };
+};
+
+export type CreateOrderPayload = {
+  userId?: number;
+  name: string;
+  email: string;
+  address: string;
+  city: string;
+  country: string;
+  postalCode: string;
+  phone: string;
+  paymentMethod: CheckoutFormData["paymentMethod"];
+  items: Array<{
+    productId: number;
+    quantity: number;
+    price: number;
+  }>;
+};
+
+export type CreateOrderResponse = {
+  success: boolean;
+  order: {
+    id: number;
+    total: number;
+    status: string;
+    createdAt: string;
   };
 };
 
@@ -195,4 +223,8 @@ export function updateCartItemRequest(itemId: number, payload: { quantity: numbe
 
 export function removeCartItemRequest(itemId: number) {
   return requestAuth<ApiResponse<Cart>>("delete", `/api/cart/items/${itemId}`);
+}
+
+export function createOrderRequest(payload: CreateOrderPayload) {
+  return requestAuth<CreateOrderResponse>("post", "/api/orders", payload);
 }
