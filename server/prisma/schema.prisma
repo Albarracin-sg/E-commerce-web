@@ -19,6 +19,7 @@ model User {
   password  String
   role      Role     @default(CLIENT)
   cart      Cart?
+  orders    Order[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -47,6 +48,7 @@ model Product {
   category     Category         @relation(fields: [categoryId], references: [id])
   variants     ProductVariant[]
   cartItems    CartItem[]
+  orderItems   OrderItem[]
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
@@ -99,4 +101,37 @@ model CartItem {
   @@index([cartId])
   @@index([productId])
   @@index([variantId])
+}
+
+model Order {
+  id            Int         @id @default(autoincrement())
+  userId        Int
+  user          User        @relation(fields: [userId], references: [id])
+  email         String
+  total         Float
+  status        String      @default("pendiente")
+  name          String
+  address       String
+  city          String
+  country       String
+  postalCode    String
+  phone         String
+  paymentMethod String
+  createdAt     DateTime    @default(now())
+  items         OrderItem[]
+
+  @@index([userId])
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  price     Float
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
 }

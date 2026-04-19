@@ -5,7 +5,10 @@ import Catalog from "../pages/Catalog";
 import ProductDetail from "../pages/ProductDetail";
 import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
+import ConfirmationPage from "../pages/ConfirmationPage";
 import Login from "../pages/Login";
+import ProcessingPaymentPage from "../pages/ProcessingPaymentPage";
+import PurchaseAlertPage from "../pages/PurchaseAlertPage";
 import Register from "../pages/Register";
 import { getAuth } from "../utils/auth";
 
@@ -52,6 +55,9 @@ export default function AppRoutes() {
       <Route path="/cart" element={<RequireAuth><Cart /></RequireAuth>} />
       <Route path="/carrito" element={<Navigate to="/cart" replace />} />
       <Route path="/checkout" element={<RequireAuth><Checkout /></RequireAuth>} />
+      <Route path="/processing-payment" element={<RequireAuth><ProcessingPaymentPage /></RequireAuth>} />
+      <Route path="/purchase-alert" element={<RequireAuth><PurchaseAlertPage /></RequireAuth>} />
+      <Route path="/confirmation" element={<RequireAuth><ConfirmationPage /></RequireAuth>} />
       <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
