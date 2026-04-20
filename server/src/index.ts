@@ -6,6 +6,7 @@ import orderRoutes from "./routes/orders";
 import productRoutes from "./routes/products";
 import categoryRoutes from "./routes/categories";
 import cartRoutes from "./routes/cart";
+import adminRoutes from "./routes/admin";
 import {
   logger,
   errorHandler,
@@ -30,6 +31,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/cart", authenticateToken, cartRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/api/health", (_req: Request, res: Response) => {
   res.json({ status: "ok", message: "API is running" });

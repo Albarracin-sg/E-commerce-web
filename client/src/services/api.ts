@@ -57,7 +57,7 @@ export type CreateOrderResponse = {
   };
 };
 
-type ApiResponse<T> = {
+export type ApiResponse<T> = {
   success: boolean;
   data: T;
   message?: string;
@@ -106,7 +106,7 @@ async function request<T>(path: string, body: object): Promise<T> {
   }
 }
 
-async function requestGet<T>(path: string, params?: Record<string, unknown>): Promise<T> {
+export async function requestGet<T>(path: string, params?: Record<string, unknown>): Promise<T> {
   try {
     const { data } = await api.get<T>(path, { params });
     return data;
@@ -115,7 +115,7 @@ async function requestGet<T>(path: string, params?: Record<string, unknown>): Pr
   }
 }
 
-async function requestAuth<T>(
+export async function requestAuth<T>(
   method: "post" | "put" | "patch" | "delete",
   path: string,
   body?: object
