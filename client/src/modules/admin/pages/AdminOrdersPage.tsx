@@ -212,7 +212,9 @@ export default function AdminOrdersPage() {
           <div className="flex flex-col gap-3 md:flex-row md:items-center">
             <label className="flex items-center gap-3 rounded-full border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface-variant">
               <Search className="h-4 w-4 text-admin-outline" />
+              <span className="sr-only">Buscar pedidos por cliente, correo o ciudad</span>
               <input
+                aria-label="Buscar pedidos por cliente, correo o ciudad"
                 type="text"
                 value={localSearch}
                 onChange={(event) => setLocalSearch(event.target.value)}
@@ -221,18 +223,24 @@ export default function AdminOrdersPage() {
               />
             </label>
 
-            <select
-              value={statusFilter}
-              onChange={(event) => setStatusFilter(event.target.value)}
-              className="rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
-            >
-              <option value="all">Todos los estados</option>
-              {ADMIN_ORDER_STATUSES.map((status) => (
-                <option key={status} value={status}>
-                  {statusMeta[status]?.label ?? status}
-                </option>
-              ))}
-            </select>
+            <div>
+              <label htmlFor="admin-orders-status-filter" className="sr-only">
+                Filtrar pedidos por estado
+              </label>
+              <select
+                id="admin-orders-status-filter"
+                value={statusFilter}
+                onChange={(event) => setStatusFilter(event.target.value)}
+                className="rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
+              >
+                <option value="all">Todos los estados</option>
+                {ADMIN_ORDER_STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {statusMeta[status]?.label ?? status}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
@@ -290,6 +298,7 @@ export default function AdminOrdersPage() {
                         <select
                           value={order.status}
                           disabled={updatingOrderId === order.id}
+                          aria-label={`Actualizar estado del pedido ${String(order.id).padStart(5, "0")}`}
                           onChange={(event) => void handleStatusChange(order.id, event.target.value as AdminOrderStatus)}
                           className="w-full rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-3 py-2 text-sm text-admin-on-surface outline-none disabled:opacity-60"
                         >

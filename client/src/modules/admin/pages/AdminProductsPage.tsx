@@ -91,7 +91,6 @@ export default function AdminProductsPage() {
   }, [searchQuery]);
 
   const lowStockCount = useMemo(() => products.filter((product) => product.stock <= 5).length, [products]);
-  const featuredCount = useMemo(() => products.filter((product) => product.featured).length, [products]);
   const inventoryValue = useMemo(
     () => products.reduce((acc, product) => acc + product.price * product.stock, 0),
     [products]
@@ -352,7 +351,12 @@ export default function AdminProductsPage() {
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-          <button type="button" onClick={closeModal} className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          <button
+            type="button"
+            onClick={closeModal}
+            aria-label="Cerrar modal de producto"
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+          />
 
           <article className="admin-panel relative z-10 w-full max-w-2xl rounded-[32px] border border-admin-outline-variant/40">
             <div className="border-b border-admin-outline-variant/20 bg-gradient-to-br from-admin-surface-low to-admin-surface-high px-7 py-6">

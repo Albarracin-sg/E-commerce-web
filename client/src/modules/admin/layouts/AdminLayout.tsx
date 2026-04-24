@@ -139,7 +139,9 @@ export default function AdminLayout() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <label className="flex min-w-[280px] items-center gap-3 rounded-full border border-admin-outline-variant/40 bg-admin-surface-highest/60 px-4 py-3 text-sm text-admin-on-surface-variant">
                 <Search className="h-4 w-4 text-admin-outline" />
+                <span className="sr-only">Buscar métricas o pedidos</span>
                 <input
+                  aria-label="Buscar métricas o pedidos"
                   type="text"
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
@@ -156,6 +158,7 @@ export default function AdminLayout() {
                       setShowNotifications((current) => !current);
                       setShowProfileMenu(false);
                     }}
+                    aria-label={showNotifications ? "Ocultar notificaciones" : "Mostrar notificaciones"}
                     className={cn(
                       "relative rounded-full border border-admin-outline-variant/40 p-3 text-admin-outline transition hover:bg-admin-surface-highest/60 hover:text-admin-primary",
                       showNotifications && "bg-admin-surface-highest/60 text-admin-primary"
@@ -187,6 +190,7 @@ export default function AdminLayout() {
 
                 <button
                   type="button"
+                  aria-label="Abrir centro de ayuda"
                   className="rounded-full border border-admin-outline-variant/40 p-3 text-admin-outline transition hover:bg-admin-surface-highest/60 hover:text-admin-primary"
                 >
                   <HelpCircle className="h-4 w-4" />
