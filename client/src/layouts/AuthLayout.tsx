@@ -3,6 +3,8 @@ import React from "react";
 interface AuthLayoutProps {
   children: React.ReactNode;
   backgroundImage: string;
+  pageTitle: string;
+  pageDescription?: React.ReactNode;
   sideTitle: React.ReactNode;
   sideSubtitle?: React.ReactNode;
   sideBottom?: React.ReactNode;
@@ -16,6 +18,8 @@ interface AuthLayoutProps {
 export default function AuthLayout({
   children,
   backgroundImage,
+  pageTitle,
+  pageDescription,
   sideTitle,
   sideSubtitle,
   sideBottom,
@@ -69,9 +73,20 @@ export default function AuthLayout({
       </div>
 
       {/* Right side */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-5 py-10 relative">
+      <main className="w-full lg:w-1/2 flex flex-col items-center justify-center px-5 py-10 relative">
+        <div className="w-full max-w-[480px] lg:hidden mb-8">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-700 mb-3">
+            Vibra Shop
+          </p>
+          <h1 className="text-4xl font-display font-extrabold tracking-tight text-slate-900 mb-3">
+            {pageTitle}
+          </h1>
+          {pageDescription && (
+            <p className="text-sm leading-6 text-slate-600">{pageDescription}</p>
+          )}
+        </div>
         {children}
-      </div>
+      </main>
     </div>
   );
 }

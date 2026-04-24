@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import Home from "../pages/Home";
 import Catalog from "../pages/Catalog";
@@ -17,20 +18,20 @@ import AdminSettingsPage from "../modules/admin/pages/AdminSettingsPage";
 import AdminUsersPage from "../modules/admin/pages/AdminUsersPage";
 import { getAuth } from "../utils/auth";
 
-function RequireAuth({ children }: { children: JSX.Element }) {
+function RequireAuth({ children }: { children: ReactElement }) {
   const auth = getAuth();
   if (!auth) return <Navigate to="/login" replace />;
   return children;
 }
 
-function RequireAdmin({ children }: { children: JSX.Element }) {
+function RequireAdmin({ children }: { children: ReactElement }) {
   const auth = getAuth();
   if (!auth) return <Navigate to="/login" replace />;
   if (auth.role !== "ADMIN") return <Navigate to="/home" replace />;
   return children;
 }
 
-function GuestOnly({ children }: { children: JSX.Element }) {
+function GuestOnly({ children }: { children: ReactElement }) {
   const auth = getAuth();
   if (auth) return <Navigate to={auth.role === "ADMIN" ? "/admin" : "/home"} replace />;
   return children;

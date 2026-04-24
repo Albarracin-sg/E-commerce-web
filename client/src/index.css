@@ -16,6 +16,15 @@
   * {
     box-sizing: border-box;
   }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
+  }
 }
 
 /* Custom checkbox checked state - not possible with pure Tailwind */
@@ -61,6 +70,11 @@
 
   .custom-checkbox {
     @apply appearance-none w-5 h-5 rounded-md bg-violet-100 border-[1.5px] border-transparent cursor-pointer relative flex-shrink-0 mt-0.5;
+  }
+
+  .custom-checkbox:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
   }
 
   .custom-checkbox:checked {

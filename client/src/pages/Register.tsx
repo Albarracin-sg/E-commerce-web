@@ -16,7 +16,6 @@ export default function Register() {
     serverMessage,
     setServerMessage,
     serverError,
-    setServerError,
     errors,
     buttonDisabled,
     set,
@@ -85,6 +84,8 @@ export default function Register() {
   return (
     <AuthLayout
       backgroundImage={bgImage}
+      pageTitle="Crea tu cuenta"
+      pageDescription="Regístrate para acceder a colecciones exclusivas, seguimiento de pedidos y una experiencia más rápida."
       sideTitle={
         <>
           Únete al
@@ -99,10 +100,10 @@ export default function Register() {
       }}
     >
       <div className="w-full max-w-[480px] bg-white rounded-3xl p-12 shadow-[0_20px_60px_rgba(0,0,0,0.05)] max-sm:p-8 max-sm:px-6 max-sm:shadow-none max-sm:rounded-none max-sm:max-w-full">
-        <h2 className="text-[2rem] font-display font-bold text-slate-800 mb-2.5 tracking-tight">
+        <h2 className="text-[2rem] font-display font-bold text-slate-900 mb-2.5 tracking-tight">
           Crea tu cuenta
         </h2>
-        <p className="text-slate-500 text-[0.95rem] mb-8">
+        <p className="text-slate-600 text-[0.95rem] mb-8">
           Introduce tus datos para empezar la experiencia.
         </p>
 
@@ -251,24 +252,33 @@ export default function Register() {
           />
         </form>
 
-        <div className="mt-6 text-center text-[0.95rem] text-slate-500">
+        <div className="mt-6 text-center text-[0.95rem] text-slate-600">
           ¿Ya tienes cuenta?{" "}
           <Link
             to="/login"
-            className="text-blue-900 font-bold no-underline ml-1.5"
+            className="text-blue-900 font-bold no-underline ml-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 rounded-md"
           >
             Inicia sesión
           </Link>
         </div>
 
-        <div className="flex gap-5 justify-center mt-auto pt-10 text-xs font-bold text-slate-400 uppercase tracking-wide">
-          <Link to="#" className="text-slate-400 no-underline">
+        <div className="flex gap-5 justify-center mt-auto pt-10 text-xs font-bold text-slate-500 uppercase tracking-wide">
+          <Link
+            to="/login"
+            className="text-slate-600 no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 rounded-md"
+          >
             Soporte
           </Link>
-          <Link to="#" className="text-slate-400 no-underline">
+          <Link
+            to="/login"
+            className="text-slate-600 no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 rounded-md"
+          >
             Privacidad
           </Link>
-          <Link to="#" className="text-slate-400 no-underline">
+          <Link
+            to="/login"
+            className="text-slate-600 no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 rounded-md"
+          >
             Ayuda
           </Link>
         </div>
