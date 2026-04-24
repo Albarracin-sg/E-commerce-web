@@ -9,7 +9,9 @@ export interface JwtPayload {
   role: 'CLIENT' | 'ADMIN';
 }
 
-const JWT_SECRET: Secret = process.env.JWT_SECRET as Secret;
+const JWT_SECRET: Secret =
+  (process.env.JWT_SECRET as Secret) ||
+  ((process.env.NODE_ENV === 'test' ? 'test-secret-key' : undefined) as Secret);
 if (!JWT_SECRET) {
   throw new Error(
     'CRITICAL: JWT_SECRET environment variable is not set. Authentication cannot start without it.'
