@@ -64,19 +64,23 @@ export type ApiResponse<T> = {
 };
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const IS_NGROK_BASE_URL = /ngrok-free\.app/i.test(API_BASE_URL);
+const DEFAULT_HEADERS: Record<string, string> = {
+  "Content-Type": "application/json",
+};
+
+if (IS_NGROK_BASE_URL) {
+  DEFAULT_HEADERS["ngrok-skip-browser-warning"] = "true";
+}
 
 const publicApi = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  headers: DEFAULT_HEADERS,
 });
 
 const authApi = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  headers: DEFAULT_HEADERS,
 });
 
 authApi.interceptors.request.use(
