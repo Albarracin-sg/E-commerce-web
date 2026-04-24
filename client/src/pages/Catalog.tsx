@@ -65,16 +65,22 @@ export default function Catalog() {
             </div>
           </div>
 
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className="rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="default">Relevancia</option>
-            <option value="price_asc">Precio: menor a mayor</option>
-            <option value="price_desc">Precio: mayor a menor</option>
-            <option value="newest">Más recientes</option>
-          </select>
+          <div>
+            <label htmlFor="catalog-sort" className="sr-only">
+              Ordenar productos del catálogo
+            </label>
+            <select
+              id="catalog-sort"
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="rounded-md border px-3 py-2 text-sm"
+            >
+              <option value="default">Relevancia</option>
+              <option value="price_asc">Precio: menor a mayor</option>
+              <option value="price_desc">Precio: mayor a menor</option>
+              <option value="newest">Más recientes</option>
+            </select>
+          </div>
         </div>
 
         <div className={`grid gap-5 ${filtersOpen ? "lg:grid-cols-[270px_minmax(0,1fr)]" : "grid-cols-1"}`}>

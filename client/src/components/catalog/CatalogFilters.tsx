@@ -36,7 +36,11 @@ export default function CatalogFilters({ categories, filters, onFilterChange }: 
 
       <div>
         <h3 className="mb-2 text-sm font-bold uppercase text-slate-700">Búsqueda</h3>
+        <label htmlFor="catalog-filter-search" className="sr-only">
+          Buscar productos por nombre o descripción
+        </label>
         <input
+          id="catalog-filter-search"
           type="search"
           value={filters.search ?? ""}
           onChange={(e) => onFilterChange({ search: e.target.value || undefined })}

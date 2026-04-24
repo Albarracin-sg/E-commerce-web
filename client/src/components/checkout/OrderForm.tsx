@@ -152,7 +152,10 @@ export function OrderForm({ onFormChange }: OrderFormProps) {
 
             <div className="space-y-3">
               <div>
-                <select className={inputClass} value={formData.paypalCountry} onChange={(event) => handleChange("paypalCountry", event.target.value)} onBlur={() => handleBlur("paypalCountry")}>
+                <label htmlFor="paypal-country" className={labelClass}>
+                  País o región de PayPal
+                </label>
+                <select id="paypal-country" className={inputClass} value={formData.paypalCountry} onChange={(event) => handleChange("paypalCountry", event.target.value)} onBlur={() => handleBlur("paypalCountry")}>
                   <option value="">País/región</option>
                   {COUNTRIES.map((country) => (
                     <option key={`paypal-${country}`} value={country}>{country}</option>
@@ -161,23 +164,38 @@ export function OrderForm({ onFormChange }: OrderFormProps) {
                 {errors.paypalCountry && <span className={errorClass}>{errors.paypalCountry}</span>}
               </div>
               <div>
-                <input className={inputClass} value={formData.paypalFirstName} onChange={(event) => handleChange("paypalFirstName", event.target.value)} onBlur={() => handleBlur("paypalFirstName")} placeholder="Nombre" />
+                <label htmlFor="paypal-first-name" className={labelClass}>
+                  Nombre
+                </label>
+                <input id="paypal-first-name" className={inputClass} value={formData.paypalFirstName} onChange={(event) => handleChange("paypalFirstName", event.target.value)} onBlur={() => handleBlur("paypalFirstName")} placeholder="Nombre" />
                 {errors.paypalFirstName && <span className={errorClass}>{errors.paypalFirstName}</span>}
               </div>
               <div>
-                <input className={inputClass} value={formData.paypalLastName} onChange={(event) => handleChange("paypalLastName", event.target.value)} onBlur={() => handleBlur("paypalLastName")} placeholder="Apellidos" />
+                <label htmlFor="paypal-last-name" className={labelClass}>
+                  Apellidos
+                </label>
+                <input id="paypal-last-name" className={inputClass} value={formData.paypalLastName} onChange={(event) => handleChange("paypalLastName", event.target.value)} onBlur={() => handleBlur("paypalLastName")} placeholder="Apellidos" />
                 {errors.paypalLastName && <span className={errorClass}>{errors.paypalLastName}</span>}
               </div>
               <div>
-                <input className={inputClass} type="email" value={formData.paypalEmail} onChange={(event) => handleChange("paypalEmail", event.target.value)} onBlur={() => handleBlur("paypalEmail")} placeholder="Dirección de correo electrónico" />
+                <label htmlFor="paypal-email" className={labelClass}>
+                  Correo electrónico
+                </label>
+                <input id="paypal-email" className={inputClass} type="email" value={formData.paypalEmail} onChange={(event) => handleChange("paypalEmail", event.target.value)} onBlur={() => handleBlur("paypalEmail")} placeholder="Dirección de correo electrónico" />
                 {errors.paypalEmail && <span className={errorClass}>{errors.paypalEmail}</span>}
               </div>
               <div>
-                <input className={inputClass} type="password" value={formData.paypalPassword} onChange={(event) => handleChange("paypalPassword", event.target.value)} onBlur={() => handleBlur("paypalPassword")} placeholder="Crear contraseña" />
+                <label htmlFor="paypal-password" className={labelClass}>
+                  Crear contraseña
+                </label>
+                <input id="paypal-password" className={inputClass} type="password" value={formData.paypalPassword} onChange={(event) => handleChange("paypalPassword", event.target.value)} onBlur={() => handleBlur("paypalPassword")} placeholder="Crear contraseña" />
                 {errors.paypalPassword && <span className={errorClass}>{errors.paypalPassword}</span>}
               </div>
               <div>
-                <input className={inputClass} type="password" value={formData.paypalPasswordConfirm} onChange={(event) => handleChange("paypalPasswordConfirm", event.target.value)} onBlur={() => handleBlur("paypalPasswordConfirm")} placeholder="Confirmar contraseña" />
+                <label htmlFor="paypal-password-confirm" className={labelClass}>
+                  Confirmar contraseña
+                </label>
+                <input id="paypal-password-confirm" className={inputClass} type="password" value={formData.paypalPasswordConfirm} onChange={(event) => handleChange("paypalPasswordConfirm", event.target.value)} onBlur={() => handleBlur("paypalPasswordConfirm")} placeholder="Confirmar contraseña" />
                 {errors.paypalPasswordConfirm && <span className={errorClass}>{errors.paypalPasswordConfirm}</span>}
               </div>
               <div className="rounded-2xl border border-dashed border-brand-300 bg-brand-50 px-4 py-3 text-sm text-brand-700">

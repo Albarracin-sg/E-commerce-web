@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { OrderForm, type FormData } from "../components/checkout/OrderForm";
+import { OrderForm } from "../components/checkout/OrderForm";
 import { useCheckoutState } from "../context/CheckoutContext";
 import { useCart } from "../context/CartContext";
 import { createOrderRequest } from "../services/api";
@@ -31,7 +31,7 @@ export default function Checkout() {
   const discount = couponApplied ? subtotal * 0.1 : 0;
   const total = subtotal + shipping - discount;
 
-  function handleFormChange(_data: FormData, _isValid: boolean) {
+  function handleFormChange() {
     setCouponMessage("");
   }
 

@@ -33,18 +33,18 @@ export default function MainStoreLayout({ children }: Props) {
             <Link to="/home" className="text-xl font-extrabold text-slate-900">
               VibePulse
             </Link>
-            <nav className="hidden gap-2 sm:flex">
-              <Link className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100" to="/home">
+            <nav className="hidden gap-2 sm:flex" aria-label="Navegación principal de la tienda">
+              <Link className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100 focus-visible:bg-slate-100" to="/home">
                 Inicio
               </Link>
-              <Link className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100" to="/catalogo">
+              <Link className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100 focus-visible:bg-slate-100" to="/catalogo">
                 Catálogo
               </Link>
-              <Link className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100" to="/cart">
+              <Link className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100 focus-visible:bg-slate-100" to="/cart">
                 Carrito
               </Link>
               {user?.role === "ADMIN" && (
-                <Link className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100" to="/admin">
+                <Link className="rounded-md px-3 py-1.5 text-sm hover:bg-slate-100 focus-visible:bg-slate-100" to="/admin">
                   Admin
                 </Link>
               )}
@@ -53,27 +53,31 @@ export default function MainStoreLayout({ children }: Props) {
 
           <div className="flex items-center gap-2">
             <form onSubmit={handleSearchSubmit} className="hidden items-center gap-2 rounded-md border bg-white px-2 py-1 md:flex">
+              <label htmlFor="store-search" className="sr-only">
+                Buscar productos en el catálogo
+              </label>
               <input
+                id="store-search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar..."
                 className="w-40 border-none bg-transparent text-sm outline-none"
               />
-              <button className="rounded px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100" type="submit">
+              <button className="rounded px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100 focus-visible:bg-slate-100" type="submit">
                 Ir
               </button>
             </form>
 
             <button
               onClick={() => navigate("/catalogo")}
-              className="rounded-md bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-700"
+              className="rounded-md bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:bg-slate-700"
             >
               Comprar
             </button>
 
             <button
               onClick={() => navigate("/cart")}
-              className="relative rounded-md border px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100"
+              className="relative rounded-md border px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100 focus-visible:bg-slate-100"
             >
               Carrito
               {totalItems > 0 && (
@@ -85,7 +89,7 @@ export default function MainStoreLayout({ children }: Props) {
 
             <button
               onClick={logout}
-              className="rounded-md border px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100"
+              className="rounded-md border px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100 focus-visible:bg-slate-100"
             >
               Salir
             </button>
