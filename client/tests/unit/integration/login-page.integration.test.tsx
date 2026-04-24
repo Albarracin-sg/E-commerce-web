@@ -10,7 +10,7 @@ describe('Login page integration', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByLabelText(/correo electrónico/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^email$/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/^contraseña$/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /iniciar sesión/i })).toBeInTheDocument();
   });

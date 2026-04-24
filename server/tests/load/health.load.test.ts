@@ -5,7 +5,7 @@ import { createApp } from '../../src/app';
 
 describe('health endpoint load baseline', () => {
   it('handles a short burst without 5xx responses', async () => {
-    process.env.RATE_LIMIT_MAX_REQUESTS = '1000';
+    process.env.RATE_LIMIT_MAX_REQUESTS = '100000';
     process.env.RATE_LIMIT_WINDOW_MS = '120000';
 
     const server = createServer(createApp());

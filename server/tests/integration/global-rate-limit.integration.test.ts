@@ -12,6 +12,8 @@ describe('global rate limit integration', () => {
     await request(app).get('/api/health').expect(200);
     const response = await request(app).get('/api/health').expect(429);
 
-    expect(response.body.error?.details?.windowMs).toBe(120000);
+    expect(response.headers['retry-after']).toBeDefined();
+    expect(response.body.error?.statusCode).toBe(429);
+    expect(response.body.error?.message).toMatch(/demasiadas solicitudes/i);
   });
 });

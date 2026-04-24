@@ -10,6 +10,6 @@ describe('App smoke', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByRole('heading', { name: /bienvenido/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: /^bienvenido$/i })).toBeInTheDocument();
   });
 });
