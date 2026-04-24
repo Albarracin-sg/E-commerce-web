@@ -1,4 +1,4 @@
-import { requestAuth, requestGet } from "../../../services/api";
+import { requestAuth, requestAuthGet } from "../../../services/api";
 import type { ApiResponse } from "../../../services/api";
 import type {
   AdminDashboardMetrics,
@@ -9,15 +9,15 @@ import type {
 } from "../types";
 
 export function getAdminDashboardMetricsRequest() {
-  return requestGet<ApiResponse<AdminDashboardMetrics>>("/api/admin/dashboard/metrics");
+  return requestAuthGet<ApiResponse<AdminDashboardMetrics>>("/api/admin/dashboard/metrics");
 }
 
 export function getAdminOrdersRequest(params?: { page?: number; limit?: number; status?: string }) {
-  return requestGet<AdminPaginatedResponse<AdminOrder>>("/api/admin/orders", params);
+  return requestAuthGet<AdminPaginatedResponse<AdminOrder>>("/api/admin/orders", params);
 }
 
 export function getAdminUsersRequest(params?: { page?: number; limit?: number }) {
-  return requestGet<AdminPaginatedResponse<AdminUser>>("/api/admin/users", params);
+  return requestAuthGet<AdminPaginatedResponse<AdminUser>>("/api/admin/users", params);
 }
 
 export function updateAdminOrderStatusRequest(id: number, status: AdminOrderStatus) {

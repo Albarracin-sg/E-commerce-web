@@ -15,13 +15,37 @@ import {
 
 export function createApp() {
   const app = express();
-  const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
+  const configuredOrigins = [
+    process.env.CLIENT_ORIGIN,
+    ...(process.env.ALLOWED_ORIGINS?.split(",") ?? []),
+  ]
+    .map((origin) => origin?.trim())
+    .filter((origin): origin is string => Boolean(origin));
+
+  const allowedOrigins = configuredOrigins.length > 0 ? configuredOrigins : ["http://localhost:5173"];
   const trustProxyHops = Number(process.env.TRUST_PROXY_HOPS) || 1;
   const globalRateLimitMaxRequests = Number(process.env.RATE_LIMIT_MAX_REQUESTS) || 100;
   const globalRateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 120000;
 
   app.set("trust proxy", trustProxyHops);
-  app.use(cors({ origin: clientOrigin, credentials: true }));
+  app.use(
+    cors({
+      origin(origin, callback) {
+        if (!origin) {
+          callback(null, true);
+          return;
+        }
+
+        if (allowedOrigins.includes(origin)) {
+          callback(null, true);
+          return;
+        }
+
+        callback(new Error(`CORS blocked for origin: ${origin}`));
+      },
+      credentials: true,
+    })
+  );
   app.use(express.json());
   app.use(logger);
   app.use(rateLimiter(globalRateLimitMaxRequests, globalRateLimitWindowMs));
