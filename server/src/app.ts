@@ -21,8 +21,15 @@ export function createApp() {
   ]
     .map((origin) => origin?.trim())
     .filter((origin): origin is string => Boolean(origin));
+  const configuredOriginPatterns = (process.env.ALLOWED_ORIGIN_PATTERNS?.split(",") ?? [])
+    .map((pattern) => pattern?.trim())
+    .filter((pattern): pattern is string => Boolean(pattern));
 
   const allowedOrigins = configuredOrigins.length > 0 ? configuredOrigins : ["http://localhost:5173"];
+  const allowedOriginPatterns = configuredOriginPatterns.map((pattern) => {
+    const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*");
+    return new RegExp(`^${escaped}$`);
+  });
   const trustProxyHops = Number(process.env.TRUST_PROXY_HOPS) || 1;
   const globalRateLimitMaxRequests = Number(process.env.RATE_LIMIT_MAX_REQUESTS) || 100;
   const globalRateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 120000;
@@ -37,6 +44,11 @@ export function createApp() {
         }
 
         if (allowedOrigins.includes(origin)) {
+          callback(null, true);
+          return;
+        }
+
+        if (allowedOriginPatterns.some((pattern) => pattern.test(origin))) {
           callback(null, true);
           return;
         }
