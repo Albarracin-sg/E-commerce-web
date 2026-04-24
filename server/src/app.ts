@@ -16,9 +16,11 @@ import {
 export function createApp() {
   const app = express();
   const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
+  const trustProxyHops = Number(process.env.TRUST_PROXY_HOPS) || 1;
   const globalRateLimitMaxRequests = Number(process.env.RATE_LIMIT_MAX_REQUESTS) || 100;
   const globalRateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 120000;
 
+  app.set("trust proxy", trustProxyHops);
   app.use(cors({ origin: clientOrigin, credentials: true }));
   app.use(express.json());
   app.use(logger);

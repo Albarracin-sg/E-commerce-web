@@ -11,15 +11,17 @@ import {
 import { AuthenticatedRequest } from "../middlewares/auth";
 
 const router = Router();
+const authRateLimitMaxRequests = Number(process.env.AUTH_RATE_LIMIT_MAX_REQUESTS) || 100;
+const authRateLimitWindowMs = Number(process.env.AUTH_RATE_LIMIT_WINDOW_MS) || 120000;
 
 /**
  * POST /api/auth/register
  * Registrar un nuevo usuario con validación de datos
- * Rate limited: 5 solicitudes por 15 minutos
+ * Rate limited: 100 solicitudes por 2 minutos
  */
 router.post(
   "/register",
-  authRateLimiter(5, 900000), // 5 solicitudes por 15 minutos
+  authRateLimiter(authRateLimitMaxRequests, authRateLimitWindowMs),
   validateRequest(validationSchemas.register),
   register
 );
@@ -27,11 +29,11 @@ router.post(
 /**
  * POST /api/auth/login
  * Login de usuario con validación de datos
- * Rate limited: 5 solicitudes por 15 minutos
+ * Rate limited: 100 solicitudes por 2 minutos
  */
 router.post(
   "/login",
-  authRateLimiter(5, 900000), // 5 solicitudes por 15 minutos
+  authRateLimiter(authRateLimitMaxRequests, authRateLimitWindowMs),
   validateRequest(validationSchemas.login),
   login
 );
