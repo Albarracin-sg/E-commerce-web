@@ -14,6 +14,10 @@ interface RateLimitEntry {
  */
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
+export const clearRateLimitStore = () => {
+  rateLimitStore.clear();
+};
+
 /**
  * Limpia las entradas expiradas del store
  */
