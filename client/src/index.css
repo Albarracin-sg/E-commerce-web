@@ -13,6 +13,10 @@
     @apply m-0 p-0 h-full w-full;
   }
 
+  body {
+    overflow-x: hidden;
+  }
+
   * {
     box-sizing: border-box;
   }
@@ -36,6 +40,7 @@
       radial-gradient(circle at top right, rgba(186, 195, 255, 0.08), transparent 25%),
       linear-gradient(180deg, #111125 0%, #0c0c1f 100%);
     color: #e2e0fc;
+    overflow-x: hidden;
   }
 
   .admin-theme .admin-glass {
@@ -66,6 +71,12 @@
   .admin-theme .admin-scrollbar::-webkit-scrollbar-thumb {
     background: #444655;
     border-radius: 9999px;
+  }
+
+  .admin-theme .admin-table-mobile-card {
+    border: 1px solid rgba(68, 70, 85, 0.3);
+    background: rgba(40, 40, 61, 0.45);
+    border-radius: 1.25rem;
   }
 
   .custom-checkbox {

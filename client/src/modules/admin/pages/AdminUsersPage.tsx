@@ -64,7 +64,7 @@ export default function AdminUsersPage() {
     <section className="space-y-8">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <h3 className="font-headline text-3xl font-extrabold tracking-tight text-admin-on-surface">
+          <h3 className="font-headline text-2xl font-extrabold tracking-tight text-admin-on-surface sm:text-3xl">
             Usuarios y roles
           </h3>
           <p className="mt-1 text-sm text-admin-on-surface-variant">
@@ -91,7 +91,7 @@ export default function AdminUsersPage() {
       </div>
 
       <article className="admin-panel overflow-hidden rounded-[28px]">
-        <div className="flex flex-col gap-3 border-b border-admin-outline-variant/20 px-6 py-5 xl:flex-row xl:items-center xl:justify-between">
+        <div className="flex flex-col gap-3 border-b border-admin-outline-variant/20 px-4 py-5 sm:px-6 xl:flex-row xl:items-center xl:justify-between">
           <div>
             <h4 className="font-headline text-xl font-bold text-admin-on-surface">Directorio operativo</h4>
             <p className="text-sm text-admin-on-surface-variant">
@@ -100,18 +100,18 @@ export default function AdminUsersPage() {
           </div>
 
           {searchQuery ? (
-            <div className="rounded-full border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface">
+            <div className="rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface">
               Búsqueda activa: <span className="font-bold">{searchQuery}</span>
             </div>
           ) : null}
         </div>
 
         {loading ? (
-          <div className="px-6 py-10 text-sm text-admin-on-surface-variant">Cargando usuarios...</div>
+          <div className="px-4 py-10 text-sm text-admin-on-surface-variant sm:px-6">Cargando usuarios...</div>
         ) : filteredUsers.length === 0 ? (
-          <div className="px-6 py-10 text-sm text-admin-on-surface-variant">No hay usuarios para mostrar en esta página.</div>
+          <div className="px-4 py-10 text-sm text-admin-on-surface-variant sm:px-6">No hay usuarios para mostrar en esta página.</div>
         ) : (
-          <div className="grid gap-6 p-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 p-4 md:grid-cols-2 md:gap-6 md:p-6 xl:grid-cols-3">
             {filteredUsers.map((user) => {
               const initials = user.name
                 .split(" ")
@@ -126,7 +126,7 @@ export default function AdminUsersPage() {
               return (
                 <article
                   key={user.id}
-                  className="rounded-[24px] border border-admin-outline-variant/20 bg-admin-surface-high/30 p-6 transition hover:border-admin-primary/30 hover:bg-admin-surface-high/45"
+                  className="rounded-[24px] border border-admin-outline-variant/20 bg-admin-surface-high/30 p-5 transition hover:border-admin-primary/30 hover:bg-admin-surface-high/45 sm:p-6"
                 >
                   <div className="flex items-start gap-4">
                     <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-admin-primary/10 text-sm font-black text-admin-primary">

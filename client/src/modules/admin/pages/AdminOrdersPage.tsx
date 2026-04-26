@@ -164,9 +164,9 @@ export default function AdminOrdersPage() {
 
   return (
     <section className="space-y-8">
-      <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <h3 className="font-headline text-3xl font-extrabold tracking-tight text-admin-on-surface">Pedidos</h3>
+          <h3 className="font-headline text-2xl font-extrabold tracking-tight text-admin-on-surface sm:text-3xl">Pedidos</h3>
           <p className="mt-1 text-sm text-admin-on-surface-variant">
             Monitorea, inspecciona y actualiza el flujo completo de órdenes.
           </p>
@@ -200,7 +200,7 @@ export default function AdminOrdersPage() {
       </div>
 
       <article className="admin-panel overflow-hidden rounded-[28px]">
-        <div className="flex flex-col gap-4 border-b border-admin-outline-variant/20 px-6 py-5 xl:flex-row xl:items-center xl:justify-between">
+        <div className="flex flex-col gap-4 border-b border-admin-outline-variant/20 px-4 py-5 sm:px-6 xl:flex-row xl:items-center xl:justify-between">
           <div>
             <h4 className="font-headline text-xl font-bold text-admin-on-surface">Historial de pedidos</h4>
             <p className="text-sm text-admin-on-surface-variant">Tabla operativa con edición de estado en línea.</p>
@@ -210,7 +210,7 @@ export default function AdminOrdersPage() {
           </div>
 
           <div className="flex flex-col gap-3 md:flex-row md:items-center">
-            <label className="flex items-center gap-3 rounded-full border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface-variant">
+            <label className="flex min-h-[48px] items-center gap-3 rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface-variant">
               <Search className="h-4 w-4 text-admin-outline" />
               <span className="sr-only">Buscar pedidos por cliente, correo o ciudad</span>
               <input
@@ -219,7 +219,7 @@ export default function AdminOrdersPage() {
                 value={localSearch}
                 onChange={(event) => setLocalSearch(event.target.value)}
                 placeholder="Buscar por cliente, correo o ciudad"
-                className="w-full min-w-[240px] bg-transparent outline-none placeholder:text-admin-outline"
+                className="w-full min-w-0 bg-transparent outline-none placeholder:text-admin-outline md:min-w-[240px]"
               />
             </label>
 
@@ -231,7 +231,7 @@ export default function AdminOrdersPage() {
                 id="admin-orders-status-filter"
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value)}
-                className="rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
+                className="min-h-[44px] rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
               >
                 <option value="all">Todos los estados</option>
                 {ADMIN_ORDER_STATUSES.map((status) => (
@@ -244,16 +244,81 @@ export default function AdminOrdersPage() {
           </div>
         </div>
 
-        <div className="border-b border-admin-outline-variant/20 bg-admin-surface-high/20 px-6 py-3 text-xs text-admin-outline">
+        <div className="border-b border-admin-outline-variant/20 bg-admin-surface-high/20 px-4 py-3 text-xs text-admin-outline sm:px-6">
           {pageScopeCopy}
         </div>
 
         {loading ? (
-          <div className="px-6 py-10 text-sm text-admin-on-surface-variant">Cargando órdenes...</div>
+          <div className="px-4 py-10 text-sm text-admin-on-surface-variant sm:px-6">Cargando órdenes...</div>
         ) : filteredOrders.length === 0 ? (
-          <div className="px-6 py-10 text-sm text-admin-on-surface-variant">No hay órdenes que coincidan con los filtros.</div>
+          <div className="px-4 py-10 text-sm text-admin-on-surface-variant sm:px-6">No hay órdenes que coincidan con los filtros.</div>
         ) : (
-          <div className="admin-scrollbar overflow-x-auto">
+          <>
+            <div className="grid gap-4 p-4 md:hidden">
+              {filteredOrders.map((order) => {
+                const customerName = order.user?.name || order.name;
+                const customerEmail = order.user?.email || order.email;
+                const statusDetails = statusMeta[order.status] ?? statusMeta.pendiente;
+
+                return (
+                  <article key={order.id} className="admin-table-mobile-card p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-admin-on-surface">#{String(order.id).padStart(5, "0")}</p>
+                        <p className="mt-1 truncate text-sm text-admin-on-surface">{customerName}</p>
+                        <p className="mt-1 truncate text-xs text-admin-on-surface-variant">{customerEmail}</p>
+                      </div>
+                      <span className={cn("inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em]", statusDetails.badgeClass)}>
+                        <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                        {statusDetails.label}
+                      </span>
+                    </div>
+
+                    <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                      <div className="rounded-2xl bg-admin-surface-high/50 px-3 py-3">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-admin-outline">Fecha</p>
+                        <p className="mt-1 text-admin-on-surface-variant">{formatDateTime(order.createdAt)}</p>
+                      </div>
+                      <div className="rounded-2xl bg-admin-surface-high/50 px-3 py-3">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-admin-outline">Total</p>
+                        <p className="mt-1 font-bold text-admin-on-surface">{formatCurrencyCOP(order.total)}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 space-y-3 rounded-2xl bg-admin-surface-high/50 px-3 py-3">
+                      <label htmlFor={`mobile-order-status-${order.id}`} className="text-[10px] font-bold uppercase tracking-[0.2em] text-admin-outline">
+                        Estado
+                      </label>
+                      <select
+                        id={`mobile-order-status-${order.id}`}
+                        value={order.status}
+                        disabled={updatingOrderId === order.id}
+                        aria-label={`Actualizar estado del pedido ${String(order.id).padStart(5, "0")}`}
+                        onChange={(event) => void handleStatusChange(order.id, event.target.value as AdminOrderStatus)}
+                        className="min-h-[44px] w-full rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-3 py-3 text-sm text-admin-on-surface outline-none disabled:opacity-60"
+                      >
+                        {ADMIN_ORDER_STATUSES.map((status) => (
+                          <option key={status} value={status}>
+                            {statusMeta[status]?.label ?? status}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedOrder(order)}
+                      className="mt-4 inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-3 py-3 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70"
+                    >
+                      <Eye className="h-4 w-4" />
+                      Ver detalle
+                    </button>
+                  </article>
+                );
+              })}
+            </div>
+
+            <div className="admin-scrollbar hidden overflow-x-auto md:block">
             <table className="min-w-full text-left">
               <thead>
                 <tr className="bg-admin-surface-high/50 text-[10px] font-bold uppercase tracking-[0.24em] text-admin-outline">
@@ -324,7 +389,8 @@ export default function AdminOrdersPage() {
                 })}
               </tbody>
             </table>
-          </div>
+            </div>
+          </>
         )}
 
         {!loading && (
@@ -337,7 +403,7 @@ export default function AdminOrdersPage() {
       </article>
 
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-50 flex items-end justify-center px-3 py-3 sm:items-center sm:px-4">
           <button
             type="button"
             aria-label="Cerrar detalle"
@@ -345,8 +411,8 @@ export default function AdminOrdersPage() {
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
           />
 
-          <article className="admin-panel relative z-10 w-full max-w-3xl rounded-[32px] border border-admin-outline-variant/40">
-            <div className="border-b border-admin-outline-variant/20 bg-gradient-to-br from-admin-surface-low to-admin-surface-high px-7 py-6">
+          <article className="admin-panel relative z-10 flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-[28px] border border-admin-outline-variant/40 sm:rounded-[32px]">
+            <div className="border-b border-admin-outline-variant/20 bg-gradient-to-br from-admin-surface-low to-admin-surface-high px-5 py-5 sm:px-7 sm:py-6">
               <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-3">
@@ -362,7 +428,7 @@ export default function AdminOrdersPage() {
                       {(statusMeta[selectedOrder.status] ?? statusMeta.pendiente).label}
                     </span>
                   </div>
-                  <h4 className="mt-3 font-headline text-3xl font-black text-admin-on-surface">
+                  <h4 className="mt-3 font-headline text-2xl font-black text-admin-on-surface sm:text-3xl">
                     {selectedOrder.user?.name || selectedOrder.name}
                   </h4>
                   <p className="mt-2 text-sm text-admin-on-surface-variant">{formatDateTime(selectedOrder.createdAt)}</p>
@@ -371,14 +437,14 @@ export default function AdminOrdersPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedOrder(null)}
-                  className="self-start rounded-full border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70"
+                  className="min-h-[44px] self-start rounded-full border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70"
                 >
                   Cerrar
                 </button>
               </div>
             </div>
 
-            <div className="grid gap-8 px-7 py-7 md:grid-cols-2">
+            <div className="admin-scrollbar grid gap-6 overflow-y-auto px-5 py-5 sm:px-7 sm:py-7 md:grid-cols-2 md:gap-8">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-admin-outline">Resumen de productos</p>
                 <div className="mt-4 space-y-3">
@@ -420,7 +486,7 @@ export default function AdminOrdersPage() {
                     value={selectedOrder.status}
                     disabled={updatingOrderId === selectedOrder.id}
                     onChange={(event) => void handleStatusChange(selectedOrder.id, event.target.value as AdminOrderStatus)}
-                    className="mt-4 w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none disabled:opacity-60"
+                    className="mt-4 min-h-[44px] w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none disabled:opacity-60"
                   >
                     {ADMIN_ORDER_STATUSES.map((status) => (
                       <option key={status} value={status}>

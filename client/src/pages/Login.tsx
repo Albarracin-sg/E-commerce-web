@@ -77,10 +77,10 @@ export default function Login() {
       badge={{ text: "VIBRA SHOP" }}
     >
       <div className="w-full max-w-[420px]">
-        <h2 className="text-[2rem] font-display font-bold text-slate-900 mb-2.5 tracking-tight">
+        <h2 className="mb-2.5 text-[1.85rem] font-display font-bold tracking-tight text-slate-900 sm:text-[2rem]">
           Bienvenido.
         </h2>
-        <p className="text-slate-600 text-[0.95rem] mb-8">
+        <p className="mb-6 text-[0.95rem] text-slate-600 sm:mb-8">
           Ingresa tus credenciales para continuar tu experiencia.
         </p>
 
@@ -114,15 +114,15 @@ export default function Login() {
             ariaDescribedBy="login-email-error"
           />
 
-          <div className="mb-5 relative">
-            <div className="flex justify-between items-center mb-2">
+            <div className="relative mb-5">
+            <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <label
                 className="block text-xs font-bold text-slate-600 uppercase tracking-wide"
                 htmlFor="login-password"
               >
                 Contraseña
               </label>
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">
+              <span className="text-xs font-bold uppercase tracking-wide text-slate-500">
                 Recuperación próximamente
               </span>
             </div>
@@ -166,7 +166,7 @@ export default function Login() {
           </Link>
         </div>
 
-        <div className="text-[0.7rem] text-slate-500 font-medium tracking-wide uppercase text-center mt-10">
+        <div className="mt-8 text-center text-[0.7rem] font-medium uppercase tracking-wide text-slate-500 sm:mt-10">
           © 2024 VIBRA SHOP. ELECTRIC EDITORIAL. TODOS LOS DERECHOS RESERVADOS.
         </div>
       </div>

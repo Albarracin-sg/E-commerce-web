@@ -153,9 +153,9 @@ export default function AdminDashboardPage() {
 
   return (
     <section className="space-y-8">
-      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h3 className="font-headline text-3xl font-extrabold tracking-tight text-admin-on-surface">
+          <h3 className="font-headline text-2xl font-extrabold tracking-tight text-admin-on-surface sm:text-3xl">
             Dashboard general
           </h3>
           <p className="mt-1 text-sm text-admin-on-surface-variant">
@@ -163,13 +163,13 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <span className="rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-4 py-3 text-xs font-bold uppercase tracking-[0.22em] text-admin-primary">
             Hoy · {formatShortDate(new Date())}
           </span>
           <button
             type="button"
-            className="flex items-center gap-2 rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-4 py-3 text-xs font-bold uppercase tracking-[0.22em] text-admin-on-surface transition hover:bg-admin-surface-highest/70"
+            className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-4 py-3 text-xs font-bold uppercase tracking-[0.22em] text-admin-on-surface transition hover:bg-admin-surface-highest/70"
           >
             <Download className="h-4 w-4" />
             Exportar vista
@@ -189,14 +189,14 @@ export default function AdminDashboardPage() {
         </div>
       ) : (
         <>
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {summaryCards.map((card) => (
               <button
                 key={card.title}
                 type="button"
                 onClick={card.onClick}
                 className={cn(
-                  "admin-panel rounded-[24px] p-6 text-left transition duration-200",
+                  "admin-panel rounded-[24px] p-5 text-left transition duration-200 sm:p-6",
                   card.onClick && "hover:-translate-y-1 hover:bg-admin-surface-highest/80"
                 )}
               >
@@ -216,16 +216,16 @@ export default function AdminDashboardPage() {
             ))}
           </div>
 
-          <div className="grid gap-8 xl:grid-cols-3">
-            <article className="admin-panel rounded-[28px] p-7 xl:col-span-2">
-              <div className="mb-8 flex items-center justify-between gap-3">
+          <div className="grid gap-6 xl:grid-cols-3 xl:gap-8">
+            <article className="admin-panel rounded-[28px] p-5 sm:p-6 xl:col-span-2 xl:p-7">
+              <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h4 className="font-headline text-xl font-bold text-admin-on-surface">Ventas mensuales</h4>
                   <p className="text-sm text-admin-on-surface-variant">Histórico de los últimos seis meses con órdenes reales.</p>
                 </div>
               </div>
 
-              <div className="h-72 w-full">
+              <div className="h-64 w-full sm:h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={salesData}>
                     <defs>
@@ -266,9 +266,9 @@ export default function AdminDashboardPage() {
               </div>
             </article>
 
-            <article className="admin-panel rounded-[28px] p-7">
+            <article className="admin-panel rounded-[28px] p-5 sm:p-6 xl:p-7">
               <h4 className="font-headline text-xl font-bold text-admin-on-surface">Pedidos por estado</h4>
-              <div className="relative mt-5 flex min-h-[240px] items-center justify-center">
+              <div className="relative mt-5 flex min-h-[220px] items-center justify-center sm:min-h-[240px]">
                 <div className="h-60 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -321,8 +321,8 @@ export default function AdminDashboardPage() {
             </article>
           </div>
 
-          <article className="admin-panel rounded-[28px] p-7">
-            <div className="mb-6 flex items-center justify-between gap-3">
+          <article className="admin-panel rounded-[28px] p-5 sm:p-6 xl:p-7">
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h4 className="font-headline text-xl font-bold uppercase tracking-tight text-admin-on-surface">
                   Últimos pedidos
@@ -332,13 +332,58 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => navigate("/admin/orders")}
-                className="text-xs font-bold uppercase tracking-[0.22em] text-admin-primary transition hover:underline"
+                className="text-left text-xs font-bold uppercase tracking-[0.22em] text-admin-primary transition hover:underline"
               >
                 Ver historial completo
               </button>
             </div>
 
-            <div className="admin-scrollbar overflow-x-auto">
+            <div className="space-y-4 md:hidden">
+              {recentOrdersRows.map((order) => {
+                const statusConfig = statusMeta[order.status] ?? statusMeta.pendiente;
+
+                return (
+                  <button
+                    key={order.id}
+                    type="button"
+                    onClick={() => navigate("/admin/orders")}
+                    className="admin-table-mobile-card block w-full p-4 text-left transition hover:bg-admin-surface-high/60"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate font-semibold text-admin-on-surface">{order.user?.name || order.name}</p>
+                        <p className="mt-1 truncate text-xs text-admin-on-surface-variant">{order.user?.email || order.email}</p>
+                      </div>
+                      <span className={cn("shrink-0 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em]", statusConfig.badge)}>
+                        {statusConfig.label}
+                      </span>
+                    </div>
+                    <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-admin-outline">Ubicación</p>
+                        <p className="mt-1 text-admin-on-surface-variant">{order.city}, {order.country}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-admin-outline">Fecha</p>
+                        <p className="mt-1 text-admin-on-surface-variant">{formatShortDate(order.createdAt)}</p>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex items-center justify-between border-t border-admin-outline-variant/20 pt-4">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-admin-outline">Monto</span>
+                      <span className="font-bold text-admin-on-surface">{formatCurrencyCOP(order.total)}</span>
+                    </div>
+                  </button>
+                );
+              })}
+
+              {recentOrdersRows.length === 0 && (
+                <div className="rounded-2xl bg-admin-surface-high/60 px-4 py-5 text-sm text-admin-on-surface-variant">
+                  No hay pedidos recientes para mostrar.
+                </div>
+              )}
+            </div>
+
+            <div className="admin-scrollbar hidden overflow-x-auto md:block">
               <table className="min-w-full text-left">
                 <thead>
                   <tr className="text-[10px] font-bold uppercase tracking-[0.24em] text-admin-outline">

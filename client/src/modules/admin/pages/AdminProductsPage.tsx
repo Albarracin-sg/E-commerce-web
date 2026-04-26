@@ -190,7 +190,7 @@ export default function AdminProductsPage() {
     <section className="space-y-8">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <h3 className="font-headline text-3xl font-extrabold tracking-tight text-admin-on-surface">
+          <h3 className="font-headline text-2xl font-extrabold tracking-tight text-admin-on-surface sm:text-3xl">
             Inventario de productos
           </h3>
           <p className="mt-1 text-sm text-admin-on-surface-variant">
@@ -205,7 +205,7 @@ export default function AdminProductsPage() {
           <button
             type="button"
             onClick={openCreateModal}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-admin-primary-container to-admin-primary px-5 py-3 text-xs font-black uppercase tracking-[0.22em] text-admin-on-primary transition hover:opacity-95"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-admin-primary-container to-admin-primary px-5 py-3 text-xs font-black uppercase tracking-[0.22em] text-admin-on-primary transition hover:opacity-95"
           >
             <Plus className="h-4 w-4" />
             Nuevo producto
@@ -227,7 +227,7 @@ export default function AdminProductsPage() {
       </div>
 
       <article className="admin-panel overflow-hidden rounded-[28px]">
-        <div className="flex flex-col gap-4 border-b border-admin-outline-variant/20 px-6 py-5 xl:flex-row xl:items-center xl:justify-between">
+        <div className="flex flex-col gap-4 border-b border-admin-outline-variant/20 px-4 py-5 sm:px-6 xl:flex-row xl:items-center xl:justify-between">
           <div>
             <h4 className="font-headline text-xl font-bold text-admin-on-surface">Listado maestro</h4>
             <p className="text-sm text-admin-on-surface-variant">
@@ -235,28 +235,107 @@ export default function AdminProductsPage() {
             </p>
           </div>
 
-          <label className="flex items-center gap-3 rounded-full border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface-variant">
+          <label className="flex min-h-[48px] items-center gap-3 rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface-variant">
             <Search className="h-4 w-4 text-admin-outline" />
             <input
               type="text"
               value={searchQuery}
               readOnly
               placeholder="Usa la búsqueda superior para filtrar productos"
-              className="w-full min-w-[260px] bg-transparent outline-none placeholder:text-admin-outline"
+              className="w-full min-w-0 bg-transparent outline-none placeholder:text-admin-outline md:min-w-[260px]"
             />
           </label>
         </div>
 
-        <div className="border-b border-admin-outline-variant/20 bg-admin-surface-high/20 px-6 py-3 text-xs text-admin-outline">
+        <div className="border-b border-admin-outline-variant/20 bg-admin-surface-high/20 px-4 py-3 text-xs text-admin-outline sm:px-6">
           Vista paginada real desde el backend. Si solo existe una página, no se muestran páginas inexistentes.
         </div>
 
         {loading ? (
-          <div className="px-6 py-10 text-sm text-admin-on-surface-variant">Cargando productos...</div>
+          <div className="px-4 py-10 text-sm text-admin-on-surface-variant sm:px-6">Cargando productos...</div>
         ) : products.length === 0 ? (
-          <div className="px-6 py-10 text-sm text-admin-on-surface-variant">No hay productos para mostrar.</div>
+          <div className="px-4 py-10 text-sm text-admin-on-surface-variant sm:px-6">No hay productos para mostrar.</div>
         ) : (
-          <div className="admin-scrollbar overflow-x-auto">
+          <>
+            <div className="grid gap-4 p-4 md:hidden">
+              {products.map((product) => {
+                const isLowStock = product.stock <= 5;
+
+                return (
+                  <article key={product.id} className="admin-table-mobile-card p-4">
+                    <div className="flex items-start gap-4">
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        referrerPolicy="no-referrer"
+                        className="h-16 w-16 shrink-0 rounded-2xl object-cover"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="truncate font-semibold text-admin-on-surface">{product.name}</p>
+                            <p className="mt-1 text-xs text-admin-on-surface-variant">ID #{product.id}</p>
+                          </div>
+                          <span className="rounded-full bg-admin-secondary-container/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-admin-secondary">
+                            {product.category?.name ?? "Sin categoría"}
+                          </span>
+                        </div>
+                        <p className="mt-3 text-xs leading-5 text-admin-on-surface-variant">
+                          {product.description ?? "Sin descripción cargada."}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                      <div className="rounded-2xl bg-admin-surface-high/50 px-3 py-3">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-admin-outline">Precio</p>
+                        <p className="mt-1 font-bold text-admin-on-surface">{formatCurrencyCOP(product.price)}</p>
+                      </div>
+                      <div className="rounded-2xl bg-admin-surface-high/50 px-3 py-3">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-admin-outline">Stock</p>
+                        <div className="mt-1 flex items-center gap-2">
+                          <p className="font-bold text-admin-on-surface">{product.stock}</p>
+                          {isLowStock && <AlertTriangle className="h-4 w-4 text-admin-tertiary" />}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      <span
+                        className={cn(
+                          "inline-flex items-center rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em]",
+                          product.featured ? "bg-emerald-500/10 text-emerald-300" : "bg-admin-surface-highest/70 text-admin-on-surface-variant"
+                        )}
+                      >
+                        {product.featured ? "Destacado" : "Catálogo"}
+                      </span>
+                      {product.badge && <span className="text-xs text-admin-outline">Badge · {product.badge}</span>}
+                    </div>
+
+                    <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                      <button
+                        type="button"
+                        onClick={() => openEditModal(product)}
+                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-3 py-3 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70"
+                      >
+                        <Pencil className="h-4 w-4" />
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void handleDelete(product)}
+                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-admin-error-container/40 bg-admin-error-container/10 px-3 py-3 text-xs font-bold uppercase tracking-[0.2em] text-admin-error transition hover:bg-admin-error-container/20"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Eliminar
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+
+            <div className="admin-scrollbar hidden overflow-x-auto md:block">
             <table className="min-w-full text-left">
               <thead>
                 <tr className="bg-admin-surface-high/50 text-[10px] font-bold uppercase tracking-[0.24em] text-admin-outline">
@@ -343,14 +422,15 @@ export default function AdminProductsPage() {
                 })}
               </tbody>
             </table>
-          </div>
+            </div>
+          </>
         )}
 
         {!loading && <AdminPagination page={page} totalPages={totalPages || 1} onPageChange={setPage} />}
       </article>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-50 flex items-end justify-center px-3 py-3 sm:items-center sm:px-4">
           <button
             type="button"
             onClick={closeModal}
@@ -358,12 +438,12 @@ export default function AdminProductsPage() {
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
           />
 
-          <article className="admin-panel relative z-10 w-full max-w-2xl rounded-[32px] border border-admin-outline-variant/40">
-            <div className="border-b border-admin-outline-variant/20 bg-gradient-to-br from-admin-surface-low to-admin-surface-high px-7 py-6">
-              <div className="flex items-start justify-between gap-4">
+          <article className="admin-panel relative z-10 flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-[28px] border border-admin-outline-variant/40 sm:rounded-[32px]">
+            <div className="border-b border-admin-outline-variant/20 bg-gradient-to-br from-admin-surface-low to-admin-surface-high px-5 py-5 sm:px-7 sm:py-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.26em] text-admin-outline">Catálogo</p>
-                  <h4 className="mt-2 font-headline text-3xl font-black text-admin-on-surface">
+                  <h4 className="mt-2 font-headline text-2xl font-black text-admin-on-surface sm:text-3xl">
                     {editingProduct ? "Editar producto" : "Nuevo producto"}
                   </h4>
                 </div>
@@ -371,21 +451,21 @@ export default function AdminProductsPage() {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="rounded-full border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70"
+                  className="min-h-[44px] self-start rounded-full border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70"
                 >
                   Cerrar
                 </button>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="grid gap-4 px-7 py-7 md:grid-cols-2">
+            <form onSubmit={handleSubmit} className="admin-scrollbar grid gap-4 overflow-y-auto px-5 py-5 sm:px-7 sm:py-7 md:grid-cols-2">
               <div className="md:col-span-2">
                 <FieldLabel label="Nombre" />
                 <input
                   required
                   value={form.name}
                   onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
-                  className="mt-2 w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
+                  className="mt-2 min-h-[44px] w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
                 />
               </div>
 
@@ -407,7 +487,7 @@ export default function AdminProductsPage() {
                   type="number"
                   value={form.price}
                   onChange={(event) => setForm((current) => ({ ...current, price: event.target.value }))}
-                  className="mt-2 w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
+                  className="mt-2 min-h-[44px] w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
                 />
               </div>
 
@@ -418,7 +498,7 @@ export default function AdminProductsPage() {
                   type="number"
                   value={form.comparePrice}
                   onChange={(event) => setForm((current) => ({ ...current, comparePrice: event.target.value }))}
-                  className="mt-2 w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
+                  className="mt-2 min-h-[44px] w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
                 />
               </div>
 
@@ -430,7 +510,7 @@ export default function AdminProductsPage() {
                   type="number"
                   value={form.stock}
                   onChange={(event) => setForm((current) => ({ ...current, stock: event.target.value }))}
-                  className="mt-2 w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
+                  className="mt-2 min-h-[44px] w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
                 />
               </div>
 
@@ -440,7 +520,7 @@ export default function AdminProductsPage() {
                   required
                   value={form.categoryId}
                   onChange={(event) => setForm((current) => ({ ...current, categoryId: event.target.value }))}
-                  className="mt-2 w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
+                  className="mt-2 min-h-[44px] w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
                 >
                   <option value="">Selecciona una categoría</option>
                   {categories.map((category) => (
@@ -458,7 +538,7 @@ export default function AdminProductsPage() {
                   type="url"
                   value={form.imageUrl}
                   onChange={(event) => setForm((current) => ({ ...current, imageUrl: event.target.value }))}
-                  className="mt-2 w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
+                  className="mt-2 min-h-[44px] w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
                 />
               </div>
 
@@ -467,7 +547,7 @@ export default function AdminProductsPage() {
                 <input
                   value={form.badge}
                   onChange={(event) => setForm((current) => ({ ...current, badge: event.target.value }))}
-                  className="mt-2 w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
+                  className="mt-2 min-h-[44px] w-full rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-high/70 px-4 py-3 text-sm text-admin-on-surface outline-none"
                 />
               </div>
 
@@ -481,18 +561,18 @@ export default function AdminProductsPage() {
                 Marcar como destacado
               </label>
 
-              <div className="md:col-span-2 flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end">
+              <div className="md:col-span-2 flex flex-col gap-3 border-t border-admin-outline-variant/20 pt-4 sm:flex-row sm:justify-end">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-5 py-3 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70"
+                  className="min-h-[44px] rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-5 py-3 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-xl bg-gradient-to-r from-admin-primary-container to-admin-primary px-5 py-3 text-xs font-black uppercase tracking-[0.22em] text-admin-on-primary transition hover:opacity-95 disabled:opacity-60"
+                  className="min-h-[44px] rounded-xl bg-gradient-to-r from-admin-primary-container to-admin-primary px-5 py-3 text-xs font-black uppercase tracking-[0.22em] text-admin-on-primary transition hover:opacity-95 disabled:opacity-60"
                 >
                   {saving ? "Guardando..." : editingProduct ? "Actualizar producto" : "Crear producto"}
                 </button>

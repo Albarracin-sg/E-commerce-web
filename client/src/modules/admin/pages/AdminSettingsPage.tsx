@@ -32,14 +32,14 @@ export default function AdminSettingsPage() {
   return (
     <section className="space-y-8">
       <div>
-        <h3 className="font-headline text-3xl font-extrabold tracking-tight text-admin-on-surface">Configuración</h3>
+        <h3 className="font-headline text-2xl font-extrabold tracking-tight text-admin-on-surface sm:text-3xl">Configuración</h3>
         <p className="mt-1 text-sm text-admin-on-surface-variant">
           Placeholder visual coherente con el shell del admin para cubrir la ruta pendiente.
         </p>
       </div>
 
-      <article className="admin-panel rounded-[28px] p-7">
-        <div className="rounded-[24px] border border-admin-outline-variant/20 bg-admin-surface-high/40 p-6">
+      <article className="admin-panel rounded-[28px] p-5 sm:p-7">
+        <div className="rounded-[24px] border border-admin-outline-variant/20 bg-admin-surface-high/40 p-5 sm:p-6">
           <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-admin-outline">Estado actual</p>
           <h4 className="mt-3 font-headline text-2xl font-black text-admin-on-surface">Módulo en preparación</h4>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-admin-on-surface-variant">
@@ -50,7 +50,7 @@ export default function AdminSettingsPage() {
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {items.map((item) => (
-            <article key={item.title} className="rounded-[24px] border border-admin-outline-variant/20 bg-admin-surface-high/30 p-6">
+            <article key={item.title} className="rounded-[24px] border border-admin-outline-variant/20 bg-admin-surface-high/30 p-5 sm:p-6">
               <div className={cn("inline-flex rounded-2xl bg-admin-surface-highest/70 p-3", item.accent)}>
                 <item.icon className="h-5 w-5" />
               </div>

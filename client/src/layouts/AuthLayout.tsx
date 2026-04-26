@@ -27,7 +27,7 @@ export default function AuthLayout({
   badge,
 }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen bg-[#f8f9fc] font-sans">
+    <div className="flex min-h-screen bg-[#f8f9fc] font-sans overflow-x-hidden">
       {/* Left side banner — Desktop only */}
       <div className="hidden lg:flex relative w-1/2 overflow-hidden bg-black flex-col justify-center p-[60px]">
         <img
@@ -73,12 +73,12 @@ export default function AuthLayout({
       </div>
 
       {/* Right side */}
-      <main className="w-full lg:w-1/2 flex flex-col items-center justify-center px-5 py-10 relative">
-        <div className="w-full max-w-[480px] lg:hidden mb-8">
+      <main className="relative flex w-full flex-col items-center justify-center px-4 py-8 sm:px-5 sm:py-10 lg:w-1/2">
+        <div className="mb-6 w-full max-w-[480px] lg:hidden sm:mb-8">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-700 mb-3">
             Vibra Shop
           </p>
-          <h1 className="text-4xl font-display font-extrabold tracking-tight text-slate-900 mb-3">
+          <h1 className="mb-3 text-3xl font-display font-extrabold tracking-tight text-slate-900 sm:text-4xl">
             {pageTitle}
           </h1>
           {pageDescription && (

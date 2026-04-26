@@ -19,7 +19,7 @@ function getVisiblePages(page: number, totalPages: number) {
 export default function AdminPagination({ page, totalPages, onPageChange }: AdminPaginationProps) {
   if (totalPages <= 1) {
     return (
-      <div className="flex items-center justify-between gap-3 border-t border-admin-outline-variant/20 px-6 py-4 text-xs text-admin-on-surface-variant">
+      <div className="flex flex-col gap-3 border-t border-admin-outline-variant/20 px-4 py-4 text-xs text-admin-on-surface-variant sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <span>Solo hay una página disponible.</span>
         <span className="rounded-full border border-admin-outline-variant/40 bg-admin-surface-high/60 px-3 py-1 font-bold text-admin-on-surface">
           Página 1 de 1
@@ -31,7 +31,7 @@ export default function AdminPagination({ page, totalPages, onPageChange }: Admi
   const visiblePages = getVisiblePages(page, totalPages);
 
   return (
-    <div className="flex flex-col gap-3 border-t border-admin-outline-variant/20 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 border-t border-admin-outline-variant/20 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
       <p className="text-xs text-admin-on-surface-variant">
         Página <span className="font-bold text-admin-on-surface">{page}</span> de {totalPages}
       </p>
@@ -41,7 +41,7 @@ export default function AdminPagination({ page, totalPages, onPageChange }: Admi
           type="button"
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}
-          className="rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70 disabled:cursor-not-allowed disabled:opacity-40"
+          className="min-h-[44px] rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70 disabled:cursor-not-allowed disabled:opacity-40"
         >
           Anterior
         </button>
@@ -53,8 +53,8 @@ export default function AdminPagination({ page, totalPages, onPageChange }: Admi
             onClick={() => onPageChange(visiblePage)}
             className={
               visiblePage === page
-                ? "rounded-xl bg-admin-primary-container px-3 py-2 text-xs font-black uppercase tracking-[0.2em] text-admin-on-primary"
-                : "rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70"
+                ? "min-h-[44px] rounded-xl bg-admin-primary-container px-3 py-2 text-xs font-black uppercase tracking-[0.2em] text-admin-on-primary"
+                : "min-h-[44px] rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70"
             }
           >
             {visiblePage}
@@ -65,7 +65,7 @@ export default function AdminPagination({ page, totalPages, onPageChange }: Admi
           type="button"
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages}
-          className="rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70 disabled:cursor-not-allowed disabled:opacity-40"
+          className="min-h-[44px] rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-admin-on-surface transition hover:bg-admin-surface-highest/70 disabled:cursor-not-allowed disabled:opacity-40"
         >
           Siguiente
         </button>
