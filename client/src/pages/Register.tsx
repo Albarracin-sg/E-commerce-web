@@ -86,6 +86,7 @@ export default function Register() {
       backgroundImage={bgImage}
       pageTitle="Crea tu cuenta"
       pageDescription="Regístrate para acceder a colecciones exclusivas, seguimiento de pedidos y una experiencia más rápida."
+      showMobileIntro={false}
       sideTitle={
         <>
           Únete al

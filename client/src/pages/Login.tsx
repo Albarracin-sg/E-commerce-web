@@ -63,6 +63,7 @@ export default function Login() {
       backgroundImage={bgImage}
       pageTitle="Bienvenido"
       pageDescription="Ingresa tus credenciales para continuar tu experiencia de compra sin fricciones."
+      showMobileIntro={false}
       sideTitle={
         <>
           Únete a la

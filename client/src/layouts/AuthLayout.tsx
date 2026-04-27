@@ -5,6 +5,7 @@ interface AuthLayoutProps {
   backgroundImage: string;
   pageTitle: string;
   pageDescription?: React.ReactNode;
+  showMobileIntro?: boolean;
   sideTitle: React.ReactNode;
   sideSubtitle?: React.ReactNode;
   sideBottom?: React.ReactNode;
@@ -20,6 +21,7 @@ export default function AuthLayout({
   backgroundImage,
   pageTitle,
   pageDescription,
+  showMobileIntro = true,
   sideTitle,
   sideSubtitle,
   sideBottom,
@@ -74,17 +76,19 @@ export default function AuthLayout({
 
       {/* Right side */}
       <main className="relative flex w-full flex-col items-center justify-center px-4 py-8 sm:px-5 sm:py-10 lg:w-1/2">
-        <div className="mb-6 w-full max-w-[480px] lg:hidden sm:mb-8">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-700 mb-3">
-            Vibra Shop
-          </p>
-          <h1 className="mb-3 text-3xl font-display font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-            {pageTitle}
-          </h1>
-          {pageDescription && (
-            <p className="text-sm leading-6 text-slate-600">{pageDescription}</p>
-          )}
-        </div>
+        {showMobileIntro && (
+          <div className="mb-6 w-full max-w-[480px] lg:hidden sm:mb-8">
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-blue-700">
+              Vibra Shop
+            </p>
+            <h1 className="mb-3 text-3xl font-display font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+              {pageTitle}
+            </h1>
+            {pageDescription && (
+              <p className="text-sm leading-6 text-slate-600">{pageDescription}</p>
+            )}
+          </div>
+        )}
         {children}
       </main>
     </div>
