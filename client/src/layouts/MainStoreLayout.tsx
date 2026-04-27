@@ -54,26 +54,26 @@ export default function MainStoreLayout({ children }: Props) {
     <div className="min-h-screen bg-slate-50">
       <header className="sticky top-0 z-40 border-b bg-white/95 backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-5">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen((current) => !current)}
                 aria-label={mobileMenuOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
                 aria-expanded={mobileMenuOpen}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-xl border text-slate-700 transition hover:bg-slate-100 sm:hidden"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-xl border text-slate-700 transition hover:bg-slate-100 lg:hidden"
               >
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
-              <Link to="/home" className="truncate text-lg font-extrabold text-slate-900 sm:text-xl">
+              <Link to="/home" className="text-base font-extrabold text-slate-900 sm:text-xl">
                 VibePulse
               </Link>
-              <nav className="hidden items-center gap-1 md:flex" aria-label="Navegación principal de la tienda">
+              <nav className="hidden items-center gap-1 lg:flex" aria-label="Navegación principal de la tienda">
                 {navLinks}
               </nav>
             </div>
 
-            <div className="hidden items-center gap-2 md:flex">
+            <div className="hidden items-center gap-2 lg:flex">
               <form onSubmit={handleSearchSubmit} className="flex min-h-[44px] items-center gap-2 rounded-xl border bg-white px-3 py-2">
                 <label htmlFor="store-search" className="sr-only">
                   Buscar productos en el catálogo
@@ -119,7 +119,13 @@ export default function MainStoreLayout({ children }: Props) {
               </button>
             </div>
 
-            <div className="flex items-center gap-2 md:hidden">
+            <div className="flex shrink-0 items-center gap-2 lg:hidden">
+              <button
+                onClick={() => navigate("/catalogo")}
+                className="min-h-[44px] rounded-xl bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-700 focus-visible:bg-slate-700 sm:px-4"
+              >
+                Comprar
+              </button>
               <button
                 onClick={() => navigate("/cart")}
                 aria-label="Ir al carrito"
@@ -134,14 +140,14 @@ export default function MainStoreLayout({ children }: Props) {
               </button>
               <button
                 onClick={logout}
-                className="min-h-[44px] rounded-xl border px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 focus-visible:bg-slate-100"
+                className="hidden min-h-[44px] rounded-xl border px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 focus-visible:bg-slate-100 min-[360px]:inline-flex"
               >
                 Salir
               </button>
             </div>
           </div>
 
-          <div className="mt-3 flex flex-col gap-3 md:hidden">
+          <div className="mt-3 flex flex-col gap-3 lg:hidden">
             <form onSubmit={handleSearchSubmit} className="flex min-h-[44px] items-center gap-2 rounded-xl border bg-white px-3 py-2">
               <label htmlFor="store-search-mobile" className="sr-only">
                 Buscar productos en el catálogo
@@ -165,10 +171,10 @@ export default function MainStoreLayout({ children }: Props) {
                   {navLinks}
                   <button
                     type="button"
-                    onClick={() => navigate("/catalogo")}
-                    className="mt-2 min-h-[44px] rounded-xl bg-slate-900 px-4 py-3 text-left text-sm font-semibold text-white"
+                    onClick={logout}
+                    className="mt-2 min-h-[44px] rounded-xl border px-4 py-3 text-left text-sm font-medium text-slate-700"
                   >
-                    Comprar ahora
+                    Salir
                   </button>
                 </nav>
               </div>
