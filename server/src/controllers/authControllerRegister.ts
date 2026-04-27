@@ -61,7 +61,7 @@ export async function register(req: Request, res: Response): Promise<Response> {
         role: user.role,
       },
     });
-  } catch (err) {
+  } catch (err: unknown) {
     // Prisma unique constraint fallback (race condition safety)
     if (
       err instanceof Prisma.PrismaClientKnownRequestError &&
