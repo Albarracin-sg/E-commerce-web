@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 /**
  * Interfaz personalizada para errores de la aplicación
  */
 interface AppError extends Error {
   statusCode?: number;
-  details?: any;
+  details?: unknown;
 }
 
 /**
@@ -44,7 +44,7 @@ export const errorHandler = (
  * Úsalo así: router.post('/ruta', asyncHandler(async (req, res) => { ... }))
  */
 export const asyncHandler = (
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>
 ) => {
   return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
@@ -57,7 +57,7 @@ export const asyncHandler = (
 export const createError = (
   message: string,
   statusCode: number = 500,
-  details?: any
+  details?: unknown
 ): AppError => {
   const error = new Error(message) as AppError;
   error.statusCode = statusCode;

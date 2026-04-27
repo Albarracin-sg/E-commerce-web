@@ -111,7 +111,7 @@ export const rateLimiter = (maxRequests: number = 100, windowMs: number = 60000)
       res.set("X-RateLimit-Reset", String(entry.resetTime));
 
       next();
-    } catch (error: any) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -122,6 +122,6 @@ export const rateLimiter = (maxRequests: number = 100, windowMs: number = 60000)
  * @param maxRequests Número máximo de solicitudes
  * @param windowMs Ventana de tiempo
  */
-export const authRateLimiter = (maxRequests: number = 100, windowMs: number = 120000) => {
+export const authRateLimiter = (maxRequests: number = 5, windowMs: number = 15 * 60 * 1000) => {
   return rateLimiter(maxRequests, windowMs);
 };
