@@ -94,8 +94,6 @@ export default function AdminLayout() {
 
   const desktopSidebarWidthClass = isSidebarCollapsed ? "lg:w-24" : "lg:w-64";
   const desktopContentOffsetClass = isSidebarCollapsed ? "lg:pl-24" : "lg:pl-64";
-  const desktopHeaderOffsetClass = isSidebarCollapsed ? "lg:left-24" : "lg:left-64";
-
   return (
     <div className="admin-theme min-h-screen overflow-x-hidden">
       {isSidebarOpen && (
@@ -112,7 +110,7 @@ export default function AdminLayout() {
       <aside
         id="admin-sidebar"
         className={cn(
-          "admin-panel fixed inset-y-0 left-0 z-[60] flex w-[88vw] max-w-[320px] flex-col border-r border-admin-outline-variant/40 px-4 py-5 transition-transform duration-300 sm:px-5 lg:max-w-none lg:px-6",
+          "admin-panel fixed inset-y-0 left-0 z-[60] flex w-[88vw] max-w-[320px] flex-col border-r border-admin-outline-variant/40 px-4 py-4 transition-transform duration-300 sm:px-5 sm:py-5 lg:max-w-none lg:px-6",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0",
           desktopSidebarWidthClass
@@ -140,7 +138,7 @@ export default function AdminLayout() {
           </button>
         </div>
 
-        <div className="mt-4 hidden lg:flex">
+        <div className="mt-3 hidden lg:flex">
           <button
             type="button"
             onClick={() => setIsSidebarCollapsed((current) => !current)}
@@ -152,7 +150,7 @@ export default function AdminLayout() {
           </button>
         </div>
 
-        <nav className="mt-8 space-y-2" aria-label="Secciones del panel administrativo">
+        <nav className="mt-6 space-y-2 lg:mt-8" aria-label="Secciones del panel administrativo">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -209,13 +207,12 @@ export default function AdminLayout() {
       <div className={cn("min-h-screen", desktopContentOffsetClass)}>
         <header
           className={cn(
-            "admin-glass fixed left-0 right-0 top-0 z-30 border-b border-admin-outline-variant/30 px-4 py-4 sm:px-5 lg:px-8",
-            desktopHeaderOffsetClass
+            "admin-glass sticky top-0 z-30 border-b border-admin-outline-variant/30 px-3 py-3 sm:px-5 sm:py-4 lg:px-8"
           )}
         >
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-wrap items-start justify-between gap-3 md:gap-4">
-              <div className="flex min-w-0 flex-1 items-start gap-3">
+          <div className="flex flex-col gap-3 sm:gap-4">
+            <div className="flex flex-col gap-3 md:gap-4">
+              <div className="flex min-w-0 items-start gap-3">
                 <button
                   type="button"
                   onClick={() => setIsSidebarOpen(true)}
@@ -227,21 +224,20 @@ export default function AdminLayout() {
                   <Menu className="h-5 w-5" />
                 </button>
 
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-admin-outline">{pageCopy.eyebrow}</p>
-                  <h2 className="mt-1 text-balance font-headline text-2xl font-extrabold tracking-tight text-admin-on-surface sm:text-3xl">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-admin-outline sm:text-xs sm:tracking-[0.24em]">{pageCopy.eyebrow}</p>
+                  <h2 className="mt-1 max-w-[14ch] text-balance font-headline text-[1.85rem] font-extrabold leading-[1.05] tracking-tight text-admin-on-surface sm:max-w-none sm:text-3xl">
                     {pageCopy.title}
                   </h2>
                 </div>
               </div>
 
-              <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
-                <div className="flex flex-wrap items-center justify-between gap-3 sm:justify-end">
-                  <span className="rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-4 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-admin-primary">
+              <div className="flex w-full flex-wrap items-center gap-2 sm:gap-3 md:justify-end">
+                <span className="rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-3 py-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-admin-primary sm:px-4 sm:py-3 sm:text-[11px] sm:tracking-[0.22em]">
                     Hoy · {new Date().toLocaleDateString("es-CO", { day: "2-digit", month: "short" })}
-                  </span>
+                </span>
 
-                  <div className="flex items-center gap-2 sm:gap-3">
+                <div className="ml-auto flex items-center gap-2 sm:gap-3">
                     <div className="relative">
                       <button
                         type="button"
@@ -252,7 +248,7 @@ export default function AdminLayout() {
                         aria-label={showNotifications ? "Ocultar notificaciones" : "Mostrar notificaciones"}
                         aria-expanded={showNotifications}
                         className={cn(
-                          "relative min-h-[44px] min-w-[44px] rounded-full border border-admin-outline-variant/40 p-3 text-admin-outline transition hover:bg-admin-surface-highest/60 hover:text-admin-primary",
+                          "relative min-h-[42px] min-w-[42px] rounded-full border border-admin-outline-variant/40 p-2.5 text-admin-outline transition hover:bg-admin-surface-highest/60 hover:text-admin-primary sm:min-h-[44px] sm:min-w-[44px] sm:p-3",
                           showNotifications && "bg-admin-surface-highest/60 text-admin-primary"
                         )}
                       >
@@ -283,7 +279,7 @@ export default function AdminLayout() {
                     <button
                       type="button"
                       aria-label="Abrir centro de ayuda"
-                      className="rounded-full border border-admin-outline-variant/40 p-3 text-admin-outline transition hover:bg-admin-surface-highest/60 hover:text-admin-primary"
+                      className="rounded-full border border-admin-outline-variant/40 p-2.5 text-admin-outline transition hover:bg-admin-surface-highest/60 hover:text-admin-primary sm:p-3"
                     >
                       <HelpCircle className="h-4 w-4" />
                     </button>
@@ -297,9 +293,9 @@ export default function AdminLayout() {
                         }}
                         aria-label="Abrir menú de perfil"
                         aria-expanded={showProfileMenu}
-                        className="flex min-h-[44px] items-center gap-2 rounded-full border border-admin-outline-variant/40 bg-admin-surface-high/50 py-2 pl-2 pr-3 transition hover:bg-admin-surface-highest/70 sm:gap-3 sm:pr-4"
+                        className="flex min-h-[42px] items-center gap-2 rounded-full border border-admin-outline-variant/40 bg-admin-surface-high/50 py-1.5 pl-1.5 pr-2 transition hover:bg-admin-surface-highest/70 sm:min-h-[44px] sm:gap-3 sm:py-2 sm:pl-2 sm:pr-4"
                       >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-admin-primary-container/20 text-sm font-black text-admin-primary">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-admin-primary-container/20 text-sm font-black text-admin-primary sm:h-10 sm:w-10">
                           {(user?.name ?? "AD").slice(0, 2).toUpperCase()}
                         </div>
                         <div className="hidden text-left sm:block">
@@ -330,12 +326,11 @@ export default function AdminLayout() {
                       )}
                     </div>
                   </div>
-                </div>
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <label className="flex min-h-[48px] w-full items-center gap-3 rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-highest/60 px-4 py-3 text-sm text-admin-on-surface-variant md:max-w-xl">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <label className="flex min-h-[46px] w-full items-center gap-3 rounded-2xl border border-admin-outline-variant/40 bg-admin-surface-highest/60 px-4 py-3 text-sm text-admin-on-surface-variant lg:max-w-xl xl:max-w-2xl">
                 <Search className="h-4 w-4 shrink-0 text-admin-outline" />
                 <span className="sr-only">Buscar métricas o pedidos</span>
                 <input
@@ -365,7 +360,7 @@ export default function AdminLayout() {
           </div>
         </header>
 
-        <main className="px-4 pb-8 pt-36 sm:px-5 md:pt-40 lg:px-8 lg:pt-36 xl:pt-40">
+        <main className="px-3 pb-6 pt-4 sm:px-5 sm:pb-8 sm:pt-5 lg:px-8 lg:pt-6">
           <Outlet context={{ searchQuery }} />
         </main>
       </div>

@@ -152,10 +152,10 @@ export default function AdminDashboardPage() {
   const recentOrdersRows = useMemo(() => recentOrders.slice(0, 5), [recentOrders]);
 
   return (
-    <section className="space-y-8">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <section className="space-y-6 sm:space-y-8">
+      <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h3 className="font-headline text-2xl font-extrabold tracking-tight text-admin-on-surface sm:text-3xl">
+          <h3 className="font-headline text-[1.85rem] font-extrabold leading-[1.05] tracking-tight text-admin-on-surface sm:text-3xl">
             Dashboard general
           </h3>
           <p className="mt-1 text-sm text-admin-on-surface-variant">
@@ -163,13 +163,13 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <span className="rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-4 py-3 text-xs font-bold uppercase tracking-[0.22em] text-admin-primary">
+        <div className="grid gap-2 sm:flex sm:flex-row sm:items-center sm:gap-3">
+          <span className="rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-3 py-2.5 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-admin-primary sm:px-4 sm:py-3 sm:text-xs sm:tracking-[0.22em]">
             Hoy · {formatShortDate(new Date())}
           </span>
           <button
             type="button"
-            className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-4 py-3 text-xs font-bold uppercase tracking-[0.22em] text-admin-on-surface transition hover:bg-admin-surface-highest/70"
+            className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-admin-outline-variant/40 bg-admin-surface-high/60 px-4 py-3 text-xs font-bold uppercase tracking-[0.18em] text-admin-on-surface transition hover:bg-admin-surface-highest/70 sm:tracking-[0.22em]"
           >
             <Download className="h-4 w-4" />
             Exportar vista
@@ -189,29 +189,29 @@ export default function AdminDashboardPage() {
         </div>
       ) : (
         <>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-4">
             {summaryCards.map((card) => (
               <button
                 key={card.title}
                 type="button"
                 onClick={card.onClick}
                 className={cn(
-                  "admin-panel rounded-[24px] p-5 text-left transition duration-200 sm:p-6",
+                  "admin-panel rounded-[22px] p-4 text-left transition duration-200 sm:rounded-[24px] sm:p-6",
                   card.onClick && "hover:-translate-y-1 hover:bg-admin-surface-highest/80"
                 )}
               >
-                <div className="mb-5 flex items-start justify-between gap-4">
-                  <div className={cn("rounded-2xl p-3", card.iconBg, card.iconColor)}>
-                    <card.icon className="h-5 w-5" />
+                <div className="mb-4 flex items-start justify-between gap-3 sm:mb-5 sm:gap-4">
+                  <div className={cn("rounded-2xl p-2.5 sm:p-3", card.iconBg, card.iconColor)}>
+                    <card.icon className="h-4 w-4 sm:h-5 sm:w-5" />
                   </div>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-emerald-300 sm:px-3 sm:text-[10px] sm:tracking-[0.2em]">
                     <ArrowUpRight className="h-3 w-3" />
                     {card.change}
                   </span>
                 </div>
                 <p className="text-sm font-medium text-admin-on-surface-variant">{card.title}</p>
-                <p className="mt-2 font-headline text-3xl font-black tracking-tight text-admin-on-surface">{card.value}</p>
-                <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.28em] text-admin-outline">{card.subtitle}</p>
+                <p className="mt-2 font-headline text-[2rem] font-black leading-none tracking-tight text-admin-on-surface sm:text-3xl">{card.value}</p>
+                <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.22em] text-admin-outline sm:text-[10px] sm:tracking-[0.28em]">{card.subtitle}</p>
               </button>
             ))}
           </div>
