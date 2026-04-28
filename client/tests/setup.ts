@@ -46,4 +46,51 @@ Object.defineProperty(window, 'matchMedia', {
   }),
 });
 
+class ResizeObserverMock {
+  observe() {
+    return undefined;
+  }
+
+  unobserve() {
+    return undefined;
+  }
+
+  disconnect() {
+    return undefined;
+  }
+}
+
+class IntersectionObserverMock {
+  observe() {
+    return undefined;
+  }
+
+  unobserve() {
+    return undefined;
+  }
+
+  disconnect() {
+    return undefined;
+  }
+
+  takeRecords() {
+    return [];
+  }
+}
+
+Object.defineProperty(window, 'ResizeObserver', {
+  writable: true,
+  value: ResizeObserverMock,
+});
+
+Object.defineProperty(window, 'IntersectionObserver', {
+  writable: true,
+  value: IntersectionObserverMock,
+});
+
+Object.defineProperty(window, 'scrollTo', {
+  writable: true,
+  value: () => undefined,
+});
+
 expect.extend(toHaveNoViolations);

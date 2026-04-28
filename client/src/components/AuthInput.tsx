@@ -2,7 +2,7 @@ import React from "react";
 
 interface AuthInputProps {
   id: string;
-  label: string;
+  label?: string;
   type?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -52,14 +52,16 @@ export default function AuthInput({
 
   return (
     <div className="mb-5 relative">
-      <label
-        className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide"
-        htmlFor={id}
-      >
-        {label}
-      </label>
+      {label && (
+        <label
+          className="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide"
+          htmlFor={id}
+        >
+          {label}
+        </label>
+      )}
       <div className="relative flex items-center">
-        <span className="absolute left-4 text-slate-500 flex pointer-events-none">
+        <span className="absolute left-4 text-slate-500 flex pointer-events-none" aria-hidden="true">
           {icon}
         </span>
         <input
