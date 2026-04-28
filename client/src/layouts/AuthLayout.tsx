@@ -35,7 +35,8 @@ export default function AuthLayout({
         <img
           src={backgroundImage}
           className="absolute top-0 left-0 w-full h-full object-cover opacity-90 z-[1]"
-          alt="Background"
+          alt=""
+          aria-hidden="true"
         />
         <div
           className="absolute top-0 left-0 w-full h-full z-[2]"
@@ -57,9 +58,9 @@ export default function AuthLayout({
         )}
 
         <div className="relative z-[3] text-white my-auto">
-          <h1 className="font-display text-[4.5rem] font-extrabold leading-[1.05] m-0 mb-6 drop-shadow-lg">
+          <div className="font-display text-[4.5rem] font-extrabold leading-[1.05] m-0 mb-6 drop-shadow-lg">
             {sideTitle}
-          </h1>
+          </div>
           {sideSubtitle && (
             <p className="text-lg leading-relaxed max-w-[450px] opacity-95 drop-shadow-md">
               {sideSubtitle}
