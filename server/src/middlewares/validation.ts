@@ -1,204 +1,339 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+import { z, ZodError, type ZodType } from "zod";
 import { createError } from "./errorHandler";
 
-/**
- * Interfaz para reglas de validación
- */
-interface ValidationRule {
-  required?: boolean;
-  type?: "string" | "email" | "number" | "boolean";
-  minLength?: number;
-  maxLength?: number;
-  pattern?: RegExp;
-  custom?: (value: any) => boolean | Promise<boolean>;
-  message?: string;
-}
-
-/**
- * Interfaz para esquema de validación
- */
-interface ValidationSchema {
-  [key: string]: ValidationRule;
-}
-
-/**
- * Valida un email
- */
-const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+type RequestSchema = {
+  body?: ZodType;
+  params?: ZodType;
+  query?: ZodType;
 };
 
-/**
- * Valida un campo contra una regla de validación
- */
-const validateField = (
-  value: any,
-  fieldName: string,
-  rule: ValidationRule
-): { valid: boolean; error?: string } => {
-  // Validar requerimiento
-  if (rule.required && (value === undefined || value === null || value === "")) {
-    return {
-      valid: false,
-      error: rule.message || `${fieldName} es requerido`,
-    };
-  }
+const ORDER_STATUS = {
+  PENDIENTE: "pendiente",
+  PAGADO: "pagado",
+  ENVIADO: "enviado",
+  ENTREGADO: "entregado",
+  CANCELADO: "cancelado",
+} as const;
 
-  if (value === undefined || value === null || value === "") {
-    return { valid: true };
-  }
+const PAYMENT_METHOD = {
+  TARJETA: "tarjeta",
+  PAYPAL: "paypal",
+} as const;
 
-  // Validar tipo
-  if (rule.type) {
-    if (rule.type === "email") {
-      if (!isValidEmail(String(value))) {
-        return {
-          valid: false,
-          error: rule.message || `${fieldName} debe ser un email válido`,
-        };
-      }
-    } else if (typeof value !== rule.type) {
-      return {
-        valid: false,
-        error:
-          rule.message ||
-          `${fieldName} debe ser de tipo ${rule.type}, recibido ${typeof value}`,
-      };
+const orderStatusValues = [
+  ORDER_STATUS.PENDIENTE,
+  ORDER_STATUS.PAGADO,
+  ORDER_STATUS.ENVIADO,
+  ORDER_STATUS.ENTREGADO,
+  ORDER_STATUS.CANCELADO,
+] as const;
+
+const paymentMethodValues = [PAYMENT_METHOD.TARJETA, PAYMENT_METHOD.PAYPAL] as const;
+
+const integerIdSchema = z.coerce.number().int().positive();
+const trimmedStringSchema = z.string().trim();
+const optionalTrimmedStringSchema = z.string().trim().min(1).optional();
+const nullableTrimmedStringSchema = z.string().trim().min(1).nullable().optional();
+
+const normalizedEmailSchema = z.string().trim().toLowerCase().email();
+const passwordSchema = z.string().min(8).max(200);
+const normalizedOrderStatusSchema = z.preprocess(
+  (value) => (typeof value === "string" ? value.trim().toLowerCase() : value),
+  z.enum(orderStatusValues)
+);
+const normalizedPaymentMethodSchema = z.preprocess(
+  (value) => (typeof value === "string" ? value.trim().toLowerCase() : value),
+  z.enum(paymentMethodValues)
+);
+
+const loginSchema = z
+  .object({
+    email: normalizedEmailSchema,
+    password: passwordSchema,
+  })
+  .strict();
+
+const registerSchema = z
+  .object({
+    name: trimmedStringSchema.min(2).max(100),
+    email: normalizedEmailSchema,
+    password: passwordSchema,
+  })
+  .strict();
+
+const cartItemBodySchema = z
+  .object({
+    productId: integerIdSchema,
+    quantity: z.coerce.number().int().positive().max(100),
+    variantId: integerIdSchema.nullable().optional(),
+    color: nullableTrimmedStringSchema,
+    size: nullableTrimmedStringSchema,
+  })
+  .strict();
+
+const cartItemQuantityBodySchema = z
+  .object({
+    quantity: z.coerce.number().int().positive().max(100),
+  })
+  .strict();
+
+const orderItemSchema = z
+  .object({
+    productId: integerIdSchema,
+    quantity: z.coerce.number().int().positive().max(100),
+    price: z.coerce.number().nonnegative().optional(),
+  })
+  .strict();
+
+const orderBodySchema = z
+  .object({
+    userId: integerIdSchema.optional(),
+    name: trimmedStringSchema.min(2).max(100),
+    email: normalizedEmailSchema,
+    address: trimmedStringSchema.min(5).max(200),
+    city: trimmedStringSchema.min(2).max(100),
+    country: trimmedStringSchema.min(2).max(100),
+    postalCode: trimmedStringSchema.min(3).max(20),
+    phone: trimmedStringSchema.min(7).max(25),
+    paymentMethod: normalizedPaymentMethodSchema,
+    items: z.array(orderItemSchema).min(1).max(100),
+  })
+  .strict();
+
+const productIdParamsSchema = z
+  .object({
+    id: integerIdSchema,
+  })
+  .strict();
+
+const categorySlugParamsSchema = z
+  .object({
+    slug: trimmedStringSchema.min(1).max(100),
+  })
+  .strict();
+
+const productQuerySchema = z
+  .object({
+    categoryId: integerIdSchema.optional(),
+    search: optionalTrimmedStringSchema,
+    minPrice: z.coerce.number().nonnegative().optional(),
+    maxPrice: z.coerce.number().nonnegative().optional(),
+    featured: z
+      .enum(["true", "false"])
+      .transform((value) => value === "true")
+      .optional(),
+    page: z.coerce.number().int().positive().max(1000).default(1),
+    limit: z.coerce.number().int().positive().max(50).default(12),
+  })
+  .strict()
+  .refine(
+    (value) =>
+      value.minPrice === undefined ||
+      value.maxPrice === undefined ||
+      value.minPrice <= value.maxPrice,
+    {
+      message: "minPrice no puede ser mayor que maxPrice",
+      path: ["minPrice"],
     }
-  }
+  );
 
-  // Validar longitud mínima
-  if (rule.minLength !== undefined && String(value).length < rule.minLength) {
-    return {
-      valid: false,
-      error:
-        rule.message ||
-        `${fieldName} debe tener mínimo ${rule.minLength} caracteres`,
-    };
-  }
+const productCreateBodySchema = z
+  .object({
+    name: trimmedStringSchema.min(2).max(120),
+    description: nullableTrimmedStringSchema,
+    price: z.coerce.number().nonnegative(),
+    comparePrice: z.coerce.number().nonnegative().nullable().optional(),
+    imageUrl: trimmedStringSchema.url().max(500),
+    stock: z.coerce.number().int().nonnegative().default(0),
+    featured: z.coerce.boolean().default(false),
+    badge: nullableTrimmedStringSchema,
+    categoryId: integerIdSchema,
+  })
+  .strict()
+  .refine(
+    (value) => value.comparePrice === undefined || value.comparePrice === null || value.comparePrice >= value.price,
+    {
+      message: "comparePrice debe ser mayor o igual a price",
+      path: ["comparePrice"],
+    }
+  );
 
-  // Validar longitud máxima
-  if (rule.maxLength !== undefined && String(value).length > rule.maxLength) {
-    return {
-      valid: false,
-      error:
-        rule.message ||
-        `${fieldName} debe tener máximo ${rule.maxLength} caracteres`,
-    };
-  }
+const productUpdateBodySchema = z
+  .object({
+    name: trimmedStringSchema.min(2).max(120).optional(),
+    description: z.string().trim().optional(),
+    price: z.coerce.number().nonnegative().optional(),
+    comparePrice: z.coerce.number().nonnegative().nullable().optional(),
+    imageUrl: trimmedStringSchema.url().max(500).optional(),
+    stock: z.coerce.number().int().nonnegative().optional(),
+    featured: z.coerce.boolean().optional(),
+    badge: z.string().trim().nullable().optional(),
+    categoryId: integerIdSchema.optional(),
+  })
+  .strict()
+  .refine((value) => Object.keys(value).length > 0, {
+    message: "Debes enviar al menos un campo para actualizar",
+  })
+  .refine(
+    (value) =>
+      value.comparePrice === undefined ||
+      value.comparePrice === null ||
+      value.price === undefined ||
+      value.comparePrice >= value.price,
+    {
+      message: "comparePrice debe ser mayor o igual a price",
+      path: ["comparePrice"],
+    }
+  );
 
-  // Validar patrón regex
-  if (rule.pattern && !rule.pattern.test(String(value))) {
-    return {
-      valid: false,
-      error:
-        rule.message || `${fieldName} tiene un formato inválido`,
-    };
-  }
+const categoryCreateBodySchema = z
+  .object({
+    name: trimmedStringSchema.min(2).max(100),
+    slug: trimmedStringSchema
+      .min(2)
+      .max(100)
+      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+      .transform((slug) => slug.toLowerCase()),
+    imageUrl: z.string().trim().url().nullable().optional(),
+    description: nullableTrimmedStringSchema,
+  })
+  .strict();
 
-  return { valid: true };
-};
+const categoryUpdateBodySchema = z
+  .object({
+    name: trimmedStringSchema.min(2).max(100).optional(),
+    slug: trimmedStringSchema
+      .min(2)
+      .max(100)
+      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+      .transform((slug) => slug.toLowerCase())
+      .optional(),
+    imageUrl: z.string().trim().url().optional(),
+    description: z.string().trim().optional(),
+  })
+  .strict()
+  .refine((value) => Object.keys(value).length > 0, {
+    message: "Debes enviar al menos un campo para actualizar",
+  });
 
-/**
- * Middleware genérico para validar datos del request body
- * @param schema Esquema de validación
- * @returns Middleware de Express
- */
-export const validateRequest = (schema: ValidationSchema) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+const adminPaginationQuerySchema = z
+  .object({
+    page: z.coerce.number().int().positive().max(1000).default(1),
+    limit: z.coerce.number().int().positive().max(100).default(20),
+  })
+  .strict();
+
+const adminOrdersQuerySchema = adminPaginationQuerySchema.extend({
+  status: normalizedOrderStatusSchema.optional(),
+});
+
+const adminOrderStatusBodySchema = z
+  .object({
+    status: normalizedOrderStatusSchema,
+  })
+  .strict();
+
+function flattenZodIssues(error: ZodError) {
+  return error.issues.reduce<Record<string, string>>((acc, issue) => {
+    const path = issue.path.join(".") || "root";
+    if (!acc[path]) {
+      acc[path] = issue.message;
+    }
+    return acc;
+  }, {});
+}
+
+export const validateRequest = (schema: RequestSchema): RequestHandler => {
+  return (req: Request, _res: Response, next: NextFunction) => {
     try {
-      const errors: Record<string, string> = {};
-
-      // Validar cada campo del esquema
-      for (const [fieldName, rule] of Object.entries(schema)) {
-        const value = req.body[fieldName];
-        const validation = validateField(value, fieldName, rule);
-
-        if (!validation.valid) {
-          errors[fieldName] = validation.error!;
-        }
+      if (schema.body) {
+        req.body = schema.body.parse(req.body);
       }
 
-      // Si hay errores, retornar respuesta de error
-      if (Object.keys(errors).length > 0) {
-        throw createError("Datos inválidos", 400, {
-          code: "VALIDATION_ERROR",
-          errors,
-        });
+      if (schema.params) {
+        req.params = schema.params.parse(req.params) as Request["params"];
+      }
+
+      if (schema.query) {
+        req.query = schema.query.parse(req.query) as Request["query"];
       }
 
       next();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      if (error instanceof ZodError) {
+        next(
+          createError("Datos inválidos", 400, {
+            code: "VALIDATION_ERROR",
+            errors: flattenZodIssues(error),
+            issues: error.issues,
+          })
+        );
+        return;
+      }
+
       next(error);
     }
   };
 };
 
-/**
- * Middleware para validar solo la presencia de un campo
- */
-export const validateRequired = (fields: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+export const validateRequired = (fields: string[]): RequestHandler => {
+  return (req: Request, _res: Response, next: NextFunction) => {
     try {
-      const errors: Record<string, string> = {};
-
-      fields.forEach((field) => {
-        if (!req.body[field]) {
-          errors[field] = `${field} es requerido`;
+      const errors = fields.reduce<Record<string, string>>((acc, field) => {
+        if (!req.body || req.body[field] === undefined || req.body[field] === null || req.body[field] === "") {
+          acc[field] = `${field} es requerido`;
         }
-      });
+
+        return acc;
+      }, {});
 
       if (Object.keys(errors).length > 0) {
-        throw createError("Campos requeridos faltantes", 400, {
-          code: "MISSING_REQUIRED_FIELDS",
-          errors,
-        });
+        next(
+          createError("Campos requeridos faltantes", 400, {
+            code: "MISSING_REQUIRED_FIELDS",
+            errors,
+          })
+        );
+        return;
       }
 
       next();
-    } catch (error: any) {
+    } catch (error: unknown) {
       next(error);
     }
   };
 };
 
-/**
- * Esquemas de validación predefinidos para casos comunes
- */
 export const validationSchemas = {
-  login: {
-    email: {
-      required: true,
-      type: "email" as const,
-      message: "Email válido requerido",
-    },
-    password: {
-      required: true,
-      type: "string" as const,
-      minLength: 8,
-      message: "Contraseña requerida (mínimo 8 caracteres)",
-    },
+  login: { body: loginSchema },
+  register: { body: registerSchema },
+  cart: {
+    addItem: { body: cartItemBodySchema },
+    updateItem: { params: productIdParamsSchema, body: cartItemQuantityBodySchema },
+    deleteItem: { params: productIdParamsSchema },
   },
-
-  register: {
-    email: {
-      required: true,
-      type: "email" as const,
-      message: "Email válido requerido",
-    },
-    password: {
-      required: true,
-      type: "string" as const,
-      minLength: 8,
-      message: "Contraseña requerida (mínimo 8 caracteres)",
-    },
-    name: {
-      required: true,
-      type: "string" as const,
-      minLength: 2,
-      maxLength: 100,
-      message: "Nombre válido requerido (2-100 caracteres)",
-    },
+  orders: {
+    create: { body: orderBodySchema },
+  },
+  products: {
+    list: { query: productQuerySchema },
+    byId: { params: productIdParamsSchema },
+    create: { body: productCreateBodySchema },
+    update: { params: productIdParamsSchema, body: productUpdateBodySchema },
+    remove: { params: productIdParamsSchema },
+  },
+  categories: {
+    bySlug: { params: categorySlugParamsSchema },
+    create: { body: categoryCreateBodySchema },
+    update: { params: productIdParamsSchema, body: categoryUpdateBodySchema },
+    remove: { params: productIdParamsSchema },
+  },
+  admin: {
+    listUsers: { query: adminPaginationQuerySchema },
+    listOrders: { query: adminOrdersQuerySchema },
+    updateOrderStatus: { params: productIdParamsSchema, body: adminOrderStatusBodySchema },
   },
 };
+
+export type ValidationSchemas = typeof validationSchemas;

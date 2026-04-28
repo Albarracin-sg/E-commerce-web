@@ -6,7 +6,7 @@ test('login route stays usable on a mobile viewport', async ({ browser }) => {
 
   await page.goto('http://127.0.0.1:4173/login');
 
-  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 2, name: /^bienvenido\.$/i })).toBeVisible();
   await expect(page.getByRole('button', { name: /iniciar sesión/i })).toBeVisible();
 
   await context.close();
