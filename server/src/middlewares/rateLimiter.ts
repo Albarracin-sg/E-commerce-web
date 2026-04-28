@@ -1,6 +1,37 @@
 import { Request, Response, NextFunction } from "express";
 import { createError } from "./errorHandler";
 
+const LOCAL_WHITELIST_IPS = new Set(["127.0.0.1", "::1", "::ffff:127.0.0.1"]);
+
+const getNodeEnv = () => process.env.NODE_ENV || "development";
+
+const shouldBypassRateLimit = (ip: string) => {
+  const env = getNodeEnv();
+
+  if (env === "test") {
+    return true;
+  }
+
+  if (env === "development" && LOCAL_WHITELIST_IPS.has(ip)) {
+    return true;
+  }
+
+  return false;
+};
+
+const getEffectiveLimits = (maxRequests: number, windowMs: number) => {
+  const env = getNodeEnv();
+
+  if (env === "development") {
+    return {
+      maxRequests: Math.max(maxRequests, 1000),
+      windowMs,
+    };
+  }
+
+  return { maxRequests, windowMs };
+};
+
 /**
  * Interfaz para almacenar información de rate limiting
  */
@@ -36,31 +67,46 @@ const cleanupExpiredEntries = () => {
 export const rateLimiter = (maxRequests: number = 100, windowMs: number = 60000) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
+      const ip = req.ip || req.socket.remoteAddress || "unknown";
+
+      if (shouldBypassRateLimit(ip)) {
+        next();
+        return;
+      }
+
+      const effectiveLimits = getEffectiveLimits(maxRequests, windowMs);
+
       // Limpiar entradas expiradas cada cierto tiempo
       if (Math.random() > 0.99) {
         cleanupExpiredEntries();
       }
 
-      const ip = req.ip || req.socket.remoteAddress || "unknown";
+      const key = `${ip}:${effectiveLimits.maxRequests}:${effectiveLimits.windowMs}`;
       const now = Date.now();
-      let entry = rateLimitStore.get(ip);
+      let entry = rateLimitStore.get(key);
 
       // Si no existe entrada o ha expirado, crear nueva
       if (!entry || entry.resetTime < now) {
         entry = {
-          count: 1,
-          resetTime: now + windowMs,
+          count: 0,
+          resetTime: now + effectiveLimits.windowMs,
         };
-        rateLimitStore.set(ip, entry);
-        next();
-        return;
+        rateLimitStore.set(key, entry);
       }
 
       // Incrementar contador
       entry.count++;
 
+      // Agregar información al response header
+      res.set("X-RateLimit-Limit", String(effectiveLimits.maxRequests));
+      res.set(
+        "X-RateLimit-Remaining",
+        String(Math.max(effectiveLimits.maxRequests - entry.count, 0))
+      );
+      res.set("X-RateLimit-Reset", String(entry.resetTime));
+
       // Verificar si excedió el límite
-      if (entry.count > maxRequests) {
+      if (entry.count > effectiveLimits.maxRequests) {
         const retryAfter = Math.ceil((entry.resetTime - now) / 1000);
 
         res.set("Retry-After", String(retryAfter));
@@ -71,16 +117,11 @@ export const rateLimiter = (maxRequests: number = 100, windowMs: number = 60000)
           {
             code: "RATE_LIMIT_EXCEEDED",
             retryAfter,
-            limit: maxRequests,
-            windowMs,
+            limit: effectiveLimits.maxRequests,
+            windowMs: effectiveLimits.windowMs,
           }
         );
       }
-
-      // Agregar información al response header
-      res.set("X-RateLimit-Limit", String(maxRequests));
-      res.set("X-RateLimit-Remaining", String(maxRequests - entry.count));
-      res.set("X-RateLimit-Reset", String(entry.resetTime));
 
       next();
     } catch (error: any) {
