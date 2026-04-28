@@ -1,4 +1,15 @@
-# Integración Sprint 3 — Detalle de producto y carrito
+# Integracion Sprint 3 - Detalle de producto y carrito
+
+> Nota historica: este archivo se conserva como referencia del trabajo de integracion del Sprint 3.
+>
+> No debe usarse como fuente canonica unica del estado actual del sistema. Para contratos vigentes, reglas observadas y contradicciones documentadas revisa:
+>
+> - `docs/README.md`
+> - `docs/business-rules-cart-order-payment.md`
+> - `docs/api-contracts-and-errors.md`
+> - `docs/permissions-and-env.md`
+>
+> Tambien puede contener referencias historicas hoy desactualizadas sobre ramas, puntos de montaje, contratos o destino del PR original.
 
 ## Rama de trabajo
 - `feat/integracion-sprint3-carrito`
