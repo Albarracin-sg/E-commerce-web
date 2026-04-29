@@ -138,6 +138,32 @@ npm run preview
 
 La aplicación de producción (preview) se abrirá generalmente en `http://localhost:4173`.
 
+### 4. Ejecutar pruebas del frontend
+
+```bash
+npm run test
+npm run test:component
+npm run test:e2e
+```
+
+#### Estrategia de testing frontend
+
+- **Vitest**: lógica unitaria y render simple.
+- **Cypress Component Testing**: componentes con `React Router`, `CheckoutProvider`, `CartProvider` y páginas admin con `useOutletContext`.
+- **Playwright**: flujos end-to-end.
+
+#### Patrones de Component Testing
+
+- Los specs viven en `client/cypress/component`.
+- El helper compartido está en `client/cypress/support/mount.tsx`.
+- Usa `cy.mount()` con opciones como:
+  - `routerProps`
+  - `withCheckoutProvider`
+  - `withCartProvider`
+  - `outletContext`
+  - `auth`
+- Las fixtures base viven en `client/cypress/fixtures`.
+
 ---
 
 ## Uso

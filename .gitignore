@@ -34,3 +34,8 @@ yarn-error.log*
 # logs locales de depuracion
 .logs/
 *.log
+
+# artefactos de Cypress
+/client/cypress/downloads/
+/client/cypress/screenshots/
+/client/cypress/videos/

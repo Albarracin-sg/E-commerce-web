@@ -3,6 +3,13 @@ import { Request, Response } from "express";
 import prisma from "../config/prisma";
 import { extractTokenFromHeader, verifyToken } from "../config/jwt";
 
+const ORDER_ERROR_CODE = {
+  INVALID_ORDER_REFERENCE: "INVALID_ORDER_REFERENCE",
+  USER_NOT_FOUND: "USER_NOT_FOUND",
+} as const;
+
+type OrderErrorCode = (typeof ORDER_ERROR_CODE)[keyof typeof ORDER_ERROR_CODE];
+
 type OrderItemPayload = {
   productId: number;
   quantity: number;
@@ -22,6 +29,15 @@ type CreateOrderPayload = {
   items?: OrderItemPayload[];
 };
 
+interface OrderUserResolutionResult {
+  errorCode?: OrderErrorCode;
+  userId: number | null;
+}
+
+interface PrismaKnownErrorLike {
+  code?: string;
+}
+
 function parseAuthenticatedUserId(req: Request) {
   const token = extractTokenFromHeader(req.headers.authorization);
   if (!token) return null;
@@ -33,25 +49,52 @@ function parseAuthenticatedUserId(req: Request) {
   return Number.isNaN(userId) ? null : userId;
 }
 
-async function resolveOrderUserId(payload: CreateOrderPayload, authenticatedUserId: number | null) {
+function isPrismaForeignKeyError(error: unknown): error is PrismaKnownErrorLike {
+  return typeof error === "object" && error !== null && "code" in error && (error as PrismaKnownErrorLike).code === "P2003";
+}
+
+function sendOrderReferenceError(res: Response, code: OrderErrorCode, message: string) {
+  res.status(422).json({
+    success: false,
+    code,
+    message,
+  });
+}
+
+async function resolveOrderUserId(
+  payload: CreateOrderPayload,
+  authenticatedUserId: number | null
+): Promise<OrderUserResolutionResult> {
   if (authenticatedUserId) {
-    return authenticatedUserId;
+    return { userId: authenticatedUserId };
   }
 
   if (payload.userId && Number.isInteger(payload.userId) && payload.userId > 0) {
-    return payload.userId;
+    const existingUser = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { id: true },
+    });
+
+    if (!existingUser) {
+      return {
+        userId: null,
+        errorCode: ORDER_ERROR_CODE.USER_NOT_FOUND,
+      };
+    }
+
+    return { userId: existingUser.id };
   }
 
   const email = payload.email?.trim().toLowerCase();
   const name = payload.name?.trim();
 
   if (!email || !name) {
-    return null;
+    return { userId: null };
   }
 
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
-    return existingUser.id;
+    return { userId: existingUser.id };
   }
 
   const placeholderPassword = await bcrypt.hash(`checkout-${email}`, 10);
@@ -64,7 +107,7 @@ async function resolveOrderUserId(payload: CreateOrderPayload, authenticatedUser
     },
   });
 
-  return createdUser.id;
+  return { userId: createdUser.id };
 }
 
 export async function createOrder(req: Request, res: Response) {
@@ -105,7 +148,12 @@ export async function createOrder(req: Request, res: Response) {
     }
 
     const authenticatedUserId = parseAuthenticatedUserId(req);
-    const resolvedUserId = await resolveOrderUserId(payload, authenticatedUserId);
+    const { errorCode, userId: resolvedUserId } = await resolveOrderUserId(payload, authenticatedUserId);
+
+    if (errorCode === ORDER_ERROR_CODE.USER_NOT_FOUND) {
+      sendOrderReferenceError(res, errorCode, "El usuario indicado no existe");
+      return;
+    }
 
     if (!resolvedUserId) {
       res.status(400).json({ success: false, message: "No se pudo resolver el usuario de la orden" });
@@ -172,6 +220,15 @@ export async function createOrder(req: Request, res: Response) {
 
     res.status(201).json({ success: true, order });
   } catch (error) {
+    if (isPrismaForeignKeyError(error)) {
+      sendOrderReferenceError(
+        res,
+        ORDER_ERROR_CODE.INVALID_ORDER_REFERENCE,
+        "No fue posible crear la orden porque una referencia relacionada ya no existe"
+      );
+      return;
+    }
+
     console.error("[orders:create]", error);
     res.status(500).json({ success: false, message: "Error al crear la orden" });
   }
