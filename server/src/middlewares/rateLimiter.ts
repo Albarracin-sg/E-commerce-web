@@ -95,7 +95,7 @@ export const rateLimiter = (maxRequests: number = 100, windowMs: number = 60000)
 
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      const ip = req.ip || req.socket.remoteAddress || "unknown";
+      const ip = getClientIp(req);
 
       if (shouldBypassRateLimit(ip)) {
         next();
