@@ -52,6 +52,7 @@ describe("security validation contracts", () => {
 
     const invalidOrder = await request(app)
       .post("/api/orders")
+      .set("Authorization", `Bearer ${clientToken}`)
       .send({
         name: "A",
         email: " BAD@EXAMPLE.COM ",

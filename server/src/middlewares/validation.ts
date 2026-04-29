@@ -81,6 +81,7 @@ const cartItemQuantityBodySchema = z
 const orderItemSchema = z
   .object({
     productId: integerIdSchema,
+    variantId: integerIdSchema.nullable().optional(),
     quantity: z.coerce.number().int().positive().max(100),
     price: z.coerce.number().nonnegative().optional(),
   })
@@ -88,7 +89,6 @@ const orderItemSchema = z
 
 const orderBodySchema = z
   .object({
-    userId: integerIdSchema.optional(),
     name: trimmedStringSchema.min(2).max(100),
     email: normalizedEmailSchema,
     address: trimmedStringSchema.min(5).max(200),

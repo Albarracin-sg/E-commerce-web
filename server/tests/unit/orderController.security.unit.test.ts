@@ -71,6 +71,7 @@ describe("orderController security", () => {
     prismaMock.$transaction.mockImplementation(async (callback: (client: typeof tx) => Promise<unknown>) => callback(tx));
 
     const req = {
+      userId: 55,
       headers: {},
       body: {
         name: "Ada Lovelace",
@@ -109,6 +110,68 @@ describe("orderController security", () => {
     expect(res.status).toHaveBeenCalledWith(201);
   });
 
+  it("decrements stock from product variants when variantId is provided", async () => {
+    prismaMock.user.findUnique.mockResolvedValue({ id: 55 });
+
+    const tx = {
+      cart: {
+        findUnique: vi.fn().mockResolvedValue(null),
+        update: vi.fn(),
+      },
+      cartItem: {
+        deleteMany: vi.fn(),
+      },
+      product: {
+        findMany: vi.fn().mockResolvedValue([{ id: 7, price: 99 }]),
+        updateMany: vi.fn(),
+      },
+      productVariant: {
+        updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+      },
+      order: {
+        create: vi.fn().mockImplementation(async ({ data }) => ({
+          id: 501,
+          ...data,
+          items: data.items.create,
+          user: { id: 55, name: data.name, email: data.email },
+        })),
+      },
+    };
+
+    prismaMock.$transaction.mockImplementation(async (callback: (client: typeof tx) => Promise<unknown>) => callback(tx));
+
+    const req = {
+      userId: 55,
+      headers: {},
+      body: {
+        name: "Ada Lovelace",
+        email: "ada@example.com",
+        address: "Main Street 123",
+        city: "Cordoba",
+        country: "AR",
+        postalCode: "5000",
+        phone: "3511234567",
+        paymentMethod: "tarjeta",
+        items: [{ productId: 7, variantId: 99, quantity: 2, price: 1 }],
+      },
+    } as unknown as Request;
+    const res = createResponseMock();
+
+    await createOrder(req, res);
+
+    expect(tx.productVariant.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          id: 99,
+          productId: 7,
+          stock: { gte: 2 },
+        }),
+      })
+    );
+    expect(tx.product.updateMany).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(201);
+  });
+
   it("rejects the order when authoritative stock cannot be reserved", async () => {
     prismaMock.user.findUnique.mockResolvedValue({ id: 55 });
 
@@ -132,6 +195,7 @@ describe("orderController security", () => {
     prismaMock.$transaction.mockImplementation(async (callback: (client: typeof tx) => Promise<unknown>) => callback(tx));
 
     const req = {
+      userId: 55,
       headers: {},
       body: {
         name: "Ada Lovelace",

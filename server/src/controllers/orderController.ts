@@ -1,19 +1,17 @@
-import bcrypt from "bcrypt";
 import type { CartItem, Prisma } from "@prisma/client";
 import type { Request, Response } from "express";
 import prisma from "../config/prisma";
-import { extractTokenFromHeader, verifyToken } from "../config/jwt";
 import type { AuthenticatedRequest } from "../middlewares/auth";
-import { decrementProductStock, incrementProductStock, incrementVariantStock } from "../services/inventoryService";
+import { decrementProductStock, decrementVariantStock, incrementProductStock, incrementVariantStock } from "../services/inventoryService";
 
 type OrderItemPayload = {
   productId: number;
+  variantId?: number | null;
   quantity: number;
   price?: number;
 };
 
 type CreateOrderPayload = {
-  userId?: number;
   name: string;
   email: string;
   address: string;
@@ -27,6 +25,7 @@ type CreateOrderPayload = {
 
 type NormalizedOrderItem = {
   productId: number;
+  variantId: number | null;
   quantity: number;
 };
 
@@ -46,52 +45,26 @@ function isOrderError(error: unknown, code: (typeof ORDER_ERROR)[keyof typeof OR
   return error instanceof OrderError && error.code === code;
 }
 
-function parseAuthenticatedUserId(req: Request) {
-  const token = extractTokenFromHeader(req.headers.authorization);
-  if (!token) return null;
-
-  const payload = verifyToken(token);
-  if (!payload) return null;
-
-  const userId = Number(payload.id);
-  return Number.isNaN(userId) ? null : userId;
-}
-
-async function resolveOrderUserId(payload: CreateOrderPayload, authenticatedUserId: number | null) {
-  if (authenticatedUserId) {
-    return authenticatedUserId;
-  }
-
-  if (payload.userId && Number.isInteger(payload.userId) && payload.userId > 0) {
-    return payload.userId;
-  }
-
-  const existingUser = await prisma.user.findUnique({ where: { email: payload.email } });
-  if (existingUser) {
-    return existingUser.id;
-  }
-
-  const placeholderPassword = await bcrypt.hash(`checkout-${payload.email}`, 10);
-  const createdUser = await prisma.user.create({
-    data: {
-      name: payload.name,
-      email: payload.email,
-      password: placeholderPassword,
-      role: "CLIENT",
-    },
-  });
-
-  return createdUser.id;
-}
-
 function normalizeItems(items: OrderItemPayload[]): NormalizedOrderItem[] {
-  const aggregated = new Map<number, number>();
+  const aggregated = new Map<string, NormalizedOrderItem>();
 
   for (const item of items) {
-    aggregated.set(item.productId, (aggregated.get(item.productId) ?? 0) + item.quantity);
+    const variantId = item.variantId ?? null;
+    const key = `${item.productId}-${variantId}`;
+    const existing = aggregated.get(key);
+
+    if (existing) {
+      existing.quantity += item.quantity;
+    } else {
+      aggregated.set(key, {
+        productId: item.productId,
+        variantId,
+        quantity: item.quantity,
+      });
+    }
   }
 
-  return [...aggregated.entries()].map(([productId, quantity]) => ({ productId, quantity }));
+  return Array.from(aggregated.values());
 }
 
 async function restoreReservedCartStock(tx: Prisma.TransactionClient, cartItems: CartItem[]) {
@@ -107,23 +80,22 @@ async function restoreReservedCartStock(tx: Prisma.TransactionClient, cartItems:
 
 export async function createOrder(req: Request, res: Response) {
   try {
-    const payload = req.body as CreateOrderPayload;
-    const authenticatedUserId = parseAuthenticatedUserId(req);
-    const resolvedUserId = await resolveOrderUserId(payload, authenticatedUserId);
+    const authReq = req as AuthenticatedRequest;
+    const authenticatedUserId = Number(authReq.userId);
 
-    if (!resolvedUserId) {
-      throw new OrderError(ORDER_ERROR.USER_RESOLUTION_FAILED);
+    if (!Number.isInteger(authenticatedUserId) || authenticatedUserId <= 0) {
+      res.status(401).json({ success: false, message: "Usuario no autenticado" });
+      return;
     }
 
+    const payload = req.body as CreateOrderPayload;
     const normalizedItems = normalizeItems(payload.items);
 
     const order = await prisma.$transaction(async (tx) => {
-      const cart = authenticatedUserId
-        ? await tx.cart.findUnique({
-            where: { userId: authenticatedUserId },
-            include: { items: true },
-          })
-        : null;
+      const cart = await tx.cart.findUnique({
+        where: { userId: authenticatedUserId },
+        include: { items: true },
+      });
 
       if (cart?.items.length) {
         await restoreReservedCartStock(tx, cart.items);
@@ -148,13 +120,20 @@ export async function createOrder(req: Request, res: Response) {
           throw new OrderError(ORDER_ERROR.PRODUCT_NOT_FOUND);
         }
 
-        const decremented = await decrementProductStock(tx, item.productId, item.quantity);
+        let decremented = false;
+        if (item.variantId) {
+          decremented = await decrementVariantStock(tx, item.variantId, item.productId, item.quantity);
+        } else {
+          decremented = await decrementProductStock(tx, item.productId, item.quantity);
+        }
+
         if (!decremented) {
           throw new OrderError(ORDER_ERROR.INSUFFICIENT_STOCK);
         }
 
         authoritativeItems.push({
           productId: item.productId,
+          variantId: item.variantId,
           quantity: item.quantity,
           price: product.price,
         });
@@ -164,7 +143,7 @@ export async function createOrder(req: Request, res: Response) {
 
       const createdOrder = await tx.order.create({
         data: {
-          userId: resolvedUserId,
+          userId: authenticatedUserId,
           name: payload.name,
           email: payload.email,
           address: payload.address,
@@ -195,7 +174,7 @@ export async function createOrder(req: Request, res: Response) {
         },
       });
 
-      if (authenticatedUserId && cart) {
+      if (cart) {
         await tx.cartItem.deleteMany({ where: { cartId: cart.id } });
         await tx.cart.update({ where: { id: cart.id }, data: { total: 0 } });
       }
@@ -205,11 +184,6 @@ export async function createOrder(req: Request, res: Response) {
 
     res.status(201).json({ success: true, order });
   } catch (error: unknown) {
-    if (isOrderError(error, ORDER_ERROR.USER_RESOLUTION_FAILED)) {
-      res.status(400).json({ success: false, message: "No se pudo resolver el usuario de la orden" });
-      return;
-    }
-
     if (isOrderError(error, ORDER_ERROR.PRODUCT_NOT_FOUND)) {
       res.status(400).json({ success: false, message: "Uno o más productos ya no existen" });
       return;

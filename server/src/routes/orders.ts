@@ -4,7 +4,7 @@ import { authenticateToken, validateRequest, validationSchemas } from "../middle
 
 const router = Router();
 
-router.post("/", validateRequest(validationSchemas.orders.create), createOrder);
+router.post("/", authenticateToken, validateRequest(validationSchemas.orders.create), createOrder);
 router.get("/", authenticateToken, getOrders);
 
 export default router;
