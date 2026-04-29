@@ -8,17 +8,12 @@ const getNodeEnv = () => process.env.NODE_ENV || "development";
 const shouldBypassRateLimit = (ip: string) => {
   const env = getNodeEnv();
 
-  if (env === "test") {
-    return true;
-  }
-
   if (env === "development" && LOCAL_WHITELIST_IPS.has(ip)) {
     return true;
   }
 
   return false;
 };
-
 const getEffectiveLimits = (maxRequests: number, windowMs: number) => {
   const env = getNodeEnv();
 
@@ -166,3 +161,5 @@ export const rateLimiter = (maxRequests: number = 100, windowMs: number = 60000)
 export const authRateLimiter = (maxRequests: number = 5, windowMs: number = 15 * 60 * 1000) => {
   return rateLimiter(maxRequests, windowMs);
 };
+
+
