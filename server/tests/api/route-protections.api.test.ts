@@ -16,6 +16,7 @@ describe('route protections and validation contracts', () => {
     await request(app).get('/api/auth/profile').expect(401);
     await request(app).get('/api/auth/admin-only').expect(401);
     await request(app).get('/api/cart').expect(401);
+    await request(app).get('/api/orders').expect(401);
     await request(app).post('/api/cart/items').send({ productId: 1, quantity: 1 }).expect(401);
     await request(app).patch('/api/cart/items/1').send({ quantity: 2 }).expect(401);
     await request(app).delete('/api/cart/items/1').expect(401);

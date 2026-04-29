@@ -3,6 +3,7 @@ import { findUserByEmail, validatePassword } from "../services/userService";
 import { generateToken } from "../config/jwt";
 
 export const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const DUMMY_PASSWORD_HASH = "$2b$10$svxwV3HOdQ0M/0lU8qN1OupgX2Y0W4tWQ0jY0H0N0tO3mM4c54Y1a";
 
 export function isValidEmail(email: string): boolean {
   return emailPattern.test(email);
@@ -23,12 +24,10 @@ export async function login(req: Request, res: Response): Promise<Response> {
 
   try {
     const user = await findUserByEmail(email.toLowerCase().trim());
-    if (!user) {
-      return res.status(401).json({ error: "Correo o contraseña incorrectos." });
-    }
+    const passwordHash = user?.password ?? DUMMY_PASSWORD_HASH;
+    const isValid = await validatePassword(password, passwordHash);
 
-    const isValid = await validatePassword(password, user.password);
-    if (!isValid) {
+    if (!user || !isValid) {
       return res.status(401).json({ error: "Correo o contraseña incorrectos." });
     }
 
@@ -49,7 +48,7 @@ export async function login(req: Request, res: Response): Promise<Response> {
         role: user.role,
       },
     });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("[login] Unexpected error:", err);
     return res.status(500).json({ error: "Error interno del servidor. Intenta más tarde." });
   }
