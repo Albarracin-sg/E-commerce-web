@@ -41,20 +41,45 @@ interface RateLimitEntry {
 }
 
 /**
- * Map para almacenar datos de rate limiting por IP
+ * Colección de stores para cada limitador independiente
  */
-const rateLimitStore = new Map<string, RateLimitEntry>();
+const rateLimitStores = new Set<Map<string, RateLimitEntry>>();
+
+export const clearRateLimitStore = () => {
+  for (const store of rateLimitStores) {
+    store.clear();
+  }
+};
 
 /**
  * Limpia las entradas expiradas del store
  */
-const cleanupExpiredEntries = () => {
+const cleanupExpiredEntries = (store: Map<string, RateLimitEntry>) => {
   const now = Date.now();
-  for (const [key, entry] of rateLimitStore.entries()) {
+  for (const [key, entry] of store.entries()) {
     if (entry.resetTime < now) {
-      rateLimitStore.delete(key);
+      store.delete(key);
     }
   }
+};
+
+const getClientIp = (req: Request) => {
+  const forwardedFor = req.headers["x-forwarded-for"];
+  if (typeof forwardedFor === "string" && forwardedFor.trim().length > 0) {
+    return forwardedFor.split(",")[0]?.trim() || "unknown";
+  }
+
+  const realIp = req.headers["x-real-ip"];
+  if (typeof realIp === "string" && realIp.trim().length > 0) {
+    return realIp.trim();
+  }
+
+  const cfConnectingIp = req.headers["cf-connecting-ip"];
+  if (typeof cfConnectingIp === "string" && cfConnectingIp.trim().length > 0) {
+    return cfConnectingIp.trim();
+  }
+
+  return req.ip || req.socket.remoteAddress || "unknown";
 };
 
 /**
@@ -65,6 +90,9 @@ const cleanupExpiredEntries = () => {
  * @returns Middleware de Express
  */
 export const rateLimiter = (maxRequests: number = 100, windowMs: number = 60000) => {
+  const rateLimitStore = new Map<string, RateLimitEntry>();
+  rateLimitStores.add(rateLimitStore);
+
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       const ip = req.ip || req.socket.remoteAddress || "unknown";
@@ -78,7 +106,7 @@ export const rateLimiter = (maxRequests: number = 100, windowMs: number = 60000)
 
       // Limpiar entradas expiradas cada cierto tiempo
       if (Math.random() > 0.99) {
-        cleanupExpiredEntries();
+        cleanupExpiredEntries(rateLimitStore);
       }
 
       const key = `${ip}:${effectiveLimits.maxRequests}:${effectiveLimits.windowMs}`;
@@ -124,7 +152,7 @@ export const rateLimiter = (maxRequests: number = 100, windowMs: number = 60000)
       }
 
       next();
-    } catch (error: any) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -135,6 +163,6 @@ export const rateLimiter = (maxRequests: number = 100, windowMs: number = 60000)
  * @param maxRequests Número máximo de solicitudes
  * @param windowMs Ventana de tiempo
  */
-export const authRateLimiter = (maxRequests: number = 5, windowMs: number = 900000) => {
+export const authRateLimiter = (maxRequests: number = 5, windowMs: number = 15 * 60 * 1000) => {
   return rateLimiter(maxRequests, windowMs);
 };

@@ -57,22 +57,33 @@ export type CreateOrderResponse = {
   };
 };
 
-type ApiResponse<T> = {
+export type ApiResponse<T> = {
   success: boolean;
   data: T;
   message?: string;
 };
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const IS_NGROK_BASE_URL = /ngrok-free\.app/i.test(API_BASE_URL);
+const DEFAULT_HEADERS: Record<string, string> = {
+  "Content-Type": "application/json",
+};
 
-const api = axios.create({
+if (IS_NGROK_BASE_URL) {
+  DEFAULT_HEADERS["ngrok-skip-browser-warning"] = "true";
+}
+
+const publicApi = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  headers: DEFAULT_HEADERS,
 });
 
-api.interceptors.request.use(
+const authApi = axios.create({
+  baseURL: API_BASE_URL,
+  headers: DEFAULT_HEADERS,
+});
+
+authApi.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("vibe-pulse-token");
     if (token) {
@@ -99,29 +110,38 @@ function mapApiError(error: unknown): Error {
 
 async function request<T>(path: string, body: object): Promise<T> {
   try {
-    const { data } = await api.post<T>(path, body);
+    const { data } = await publicApi.post<T>(path, body);
     return data;
   } catch (error) {
     throw mapApiError(error);
   }
 }
 
-async function requestGet<T>(path: string, params?: Record<string, unknown>): Promise<T> {
+export async function requestGet<T>(path: string, params?: Record<string, unknown>): Promise<T> {
   try {
-    const { data } = await api.get<T>(path, { params });
+    const { data } = await publicApi.get<T>(path, { params });
     return data;
   } catch (error) {
     throw mapApiError(error);
   }
 }
 
-async function requestAuth<T>(
+export async function requestAuthGet<T>(path: string, params?: Record<string, unknown>): Promise<T> {
+  try {
+    const { data } = await authApi.get<T>(path, { params });
+    return data;
+  } catch (error) {
+    throw mapApiError(error);
+  }
+}
+
+export async function requestAuth<T>(
   method: "post" | "put" | "patch" | "delete",
   path: string,
   body?: object
 ): Promise<T> {
   try {
-    const { data } = await api.request<T>({
+    const { data } = await authApi.request<T>({
       method,
       url: path,
       data: body,
@@ -204,7 +224,7 @@ export function deleteProductRequest(id: number) {
 }
 
 export function getCartRequest() {
-  return requestGet<ApiResponse<Cart>>("/api/cart");
+  return requestAuthGet<ApiResponse<Cart>>("/api/cart");
 }
 
 export function addCartItemRequest(payload: {

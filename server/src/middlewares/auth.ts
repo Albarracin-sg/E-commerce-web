@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { createError } from "./errorHandler";
-import { verifyToken, extractTokenFromHeader, JwtPayload } from "../config/jwt";
+import { verifyToken, extractTokenFromHeader, type JwtPayload } from "../config/jwt";
 
 /**
  * Interfaz extendida de Request con datos de usuario
@@ -43,7 +43,7 @@ export const authenticateToken = (
     req.userId = decoded.id;
 
     next();
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error);
   }
 };
@@ -53,7 +53,7 @@ export const authenticateToken = (
  * Especifica los roles permitidos y rechaza otros
  */
 export const authorizeRole = (allowedRoles: string[]) => {
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  return (req: AuthenticatedRequest, _res: Response, next: NextFunction) => {
     try {
       const userRole = req.user?.role;
 
@@ -66,7 +66,7 @@ export const authorizeRole = (allowedRoles: string[]) => {
       }
 
       next();
-    } catch (error: any) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -77,7 +77,7 @@ export const authorizeRole = (allowedRoles: string[]) => {
  */
 export const guestOnly = (
   req: AuthenticatedRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   try {
@@ -94,7 +94,7 @@ export const guestOnly = (
     }
 
     next();
-  } catch (error: any) {
+  } catch (error: unknown) {
     next(error);
   }
 };

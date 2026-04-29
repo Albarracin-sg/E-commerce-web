@@ -16,7 +16,6 @@ export default function Register() {
     serverMessage,
     setServerMessage,
     serverError,
-    setServerError,
     errors,
     buttonDisabled,
     set,
@@ -85,6 +84,9 @@ export default function Register() {
   return (
     <AuthLayout
       backgroundImage={bgImage}
+      pageTitle="Crea tu cuenta"
+      pageDescription="Regístrate para acceder a colecciones exclusivas, seguimiento de pedidos y una experiencia más rápida."
+      showMobileIntro={false}
       sideTitle={
         <>
           Únete al
@@ -98,11 +100,11 @@ export default function Register() {
         color: "bg-[#ff8fa3] text-white",
       }}
     >
-      <div className="w-full max-w-[480px] bg-white rounded-3xl p-12 shadow-[0_20px_60px_rgba(0,0,0,0.05)] max-sm:p-8 max-sm:px-6 max-sm:shadow-none max-sm:rounded-none max-sm:max-w-full">
-        <h2 className="text-[2rem] font-display font-bold text-slate-800 mb-2.5 tracking-tight">
+      <div className="w-full max-w-[480px] rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.05)] sm:p-8 lg:p-12 max-sm:max-w-full max-sm:rounded-2xl max-sm:shadow-none">
+        <h2 className="mb-2.5 text-[1.85rem] font-display font-bold tracking-tight text-slate-900 sm:text-[2rem]">
           Crea tu cuenta
         </h2>
-        <p className="text-slate-500 text-[0.95rem] mb-8">
+        <p className="mb-6 text-[0.95rem] text-slate-600 sm:mb-8">
           Introduce tus datos para empezar la experiencia.
         </p>
 
@@ -212,7 +214,7 @@ export default function Register() {
                 checked={fields.acceptedTerms}
                 onChange={set("acceptedTerms")}
                 onBlur={blur("acceptedTerms")}
-                className={`mt-1 w-4 h-4 cursor-pointer accent-blue-600 transition-all ${
+                className={`mt-1 h-4 w-4 shrink-0 cursor-pointer accent-blue-600 transition-all ${
                   touched.acceptedTerms && errors.termsError
                     ? "border-red-500"
                     : ""
@@ -251,24 +253,33 @@ export default function Register() {
           />
         </form>
 
-        <div className="mt-6 text-center text-[0.95rem] text-slate-500">
+        <div className="mt-6 text-center text-[0.95rem] text-slate-600">
           ¿Ya tienes cuenta?{" "}
           <Link
             to="/login"
-            className="text-blue-900 font-bold no-underline ml-1.5"
+            className="text-blue-900 font-bold no-underline ml-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 rounded-md"
           >
             Inicia sesión
           </Link>
         </div>
 
-        <div className="flex gap-5 justify-center mt-auto pt-10 text-xs font-bold text-slate-400 uppercase tracking-wide">
-          <Link to="#" className="text-slate-400 no-underline">
+        <div className="mt-auto flex flex-wrap justify-center gap-4 pt-8 text-xs font-bold uppercase tracking-wide text-slate-500 sm:gap-5 sm:pt-10">
+          <Link
+            to="/login"
+            className="text-slate-600 no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 rounded-md"
+          >
             Soporte
           </Link>
-          <Link to="#" className="text-slate-400 no-underline">
+          <Link
+            to="/login"
+            className="text-slate-600 no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 rounded-md"
+          >
             Privacidad
           </Link>
-          <Link to="#" className="text-slate-400 no-underline">
+          <Link
+            to="/login"
+            className="text-slate-600 no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 rounded-md"
+          >
             Ayuda
           </Link>
         </div>

@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Response } from "express";
 import { login } from "../controllers/authControllerLogin";
 import { register } from "../controllers/authControllerRegister";
 import {
@@ -11,6 +11,8 @@ import {
 import { AuthenticatedRequest } from "../middlewares/auth";
 
 const router = Router();
+const authRateLimitMaxRequests = Number(process.env.AUTH_RATE_LIMIT_MAX_REQUESTS) || 5;
+const authRateLimitWindowMs = Number(process.env.AUTH_RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000;
 
 /**
  * POST /api/auth/register
@@ -19,7 +21,7 @@ const router = Router();
  */
 router.post(
   "/register",
-  authRateLimiter(5, 900000), // 5 solicitudes por 15 minutos
+  authRateLimiter(authRateLimitMaxRequests, authRateLimitWindowMs),
   validateRequest(validationSchemas.register),
   register
 );
@@ -31,7 +33,7 @@ router.post(
  */
 router.post(
   "/login",
-  authRateLimiter(5, 900000), // 5 solicitudes por 15 minutos
+  authRateLimiter(authRateLimitMaxRequests, authRateLimitWindowMs),
   validateRequest(validationSchemas.login),
   login
 );

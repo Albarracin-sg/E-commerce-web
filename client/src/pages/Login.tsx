@@ -61,6 +61,9 @@ export default function Login() {
   return (
     <AuthLayout
       backgroundImage={bgImage}
+      pageTitle="Bienvenido"
+      pageDescription="Ingresa tus credenciales para continuar tu experiencia de compra sin fricciones."
+      showMobileIntro={false}
       sideTitle={
         <>
           Únete a la
@@ -75,10 +78,10 @@ export default function Login() {
       badge={{ text: "VIBRA SHOP" }}
     >
       <div className="w-full max-w-[420px]">
-        <h2 className="text-[2rem] font-display font-bold text-slate-800 mb-2.5 tracking-tight">
+        <h2 className="mb-2.5 text-[1.85rem] font-display font-bold tracking-tight text-slate-900 sm:text-[2rem]">
           Bienvenido.
         </h2>
-        <p className="text-slate-500 text-[0.95rem] mb-8">
+        <p className="mb-6 text-[0.95rem] text-slate-600 sm:mb-8">
           Ingresa tus credenciales para continuar tu experiencia.
         </p>
 
@@ -112,20 +115,17 @@ export default function Login() {
             ariaDescribedBy="login-email-error"
           />
 
-          <div className="mb-5 relative">
-            <div className="flex justify-between items-center mb-2">
+            <div className="relative mb-5">
+            <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <label
                 className="block text-xs font-bold text-slate-600 uppercase tracking-wide"
                 htmlFor="login-password"
               >
                 Contraseña
               </label>
-              <Link
-                to="#"
-                className="text-xs font-bold text-blue-500 no-underline uppercase tracking-wide"
-              >
-                ¿Olvidaste?
-              </Link>
+              <span className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                Recuperación próximamente
+              </span>
             </div>
             <AuthInput
               id="login-password"
@@ -157,17 +157,17 @@ export default function Login() {
 
         <SocialButtons />
 
-        <div className="mt-6 text-center text-[0.95rem] text-slate-500">
+        <div className="mt-6 text-center text-[0.95rem] text-slate-600">
           ¿Aún no tienes cuenta?{" "}
           <Link
             to="/register"
-            className="text-blue-900 font-bold no-underline ml-1.5"
+            className="text-blue-900 font-bold no-underline ml-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 rounded-md"
           >
             Crear cuenta
           </Link>
         </div>
 
-        <div className="text-[0.7rem] text-slate-400 font-medium tracking-wide uppercase text-center mt-10">
+        <div className="mt-8 text-center text-[0.7rem] font-medium uppercase tracking-wide text-slate-500 sm:mt-10">
           © 2024 VIBRA SHOP. ELECTRIC EDITORIAL. TODOS LOS DERECHOS RESERVADOS.
         </div>
       </div>

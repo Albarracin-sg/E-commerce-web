@@ -3,6 +3,9 @@ import React from "react";
 interface AuthLayoutProps {
   children: React.ReactNode;
   backgroundImage: string;
+  pageTitle: string;
+  pageDescription?: React.ReactNode;
+  showMobileIntro?: boolean;
   sideTitle: React.ReactNode;
   sideSubtitle?: React.ReactNode;
   sideBottom?: React.ReactNode;
@@ -16,6 +19,9 @@ interface AuthLayoutProps {
 export default function AuthLayout({
   children,
   backgroundImage,
+  pageTitle,
+  pageDescription,
+  showMobileIntro = true,
   sideTitle,
   sideSubtitle,
   sideBottom,
@@ -23,7 +29,7 @@ export default function AuthLayout({
   badge,
 }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen bg-[#f8f9fc] font-sans">
+    <div className="flex min-h-screen bg-[#f8f9fc] font-sans overflow-x-hidden">
       {/* Left side banner — Desktop only */}
       <div className="hidden lg:flex relative w-1/2 overflow-hidden bg-black flex-col justify-center p-[60px]">
         <img
@@ -69,9 +75,22 @@ export default function AuthLayout({
       </div>
 
       {/* Right side */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-5 py-10 relative">
+      <main className="relative flex w-full flex-col items-center justify-center px-4 py-8 sm:px-5 sm:py-10 lg:w-1/2">
+        {showMobileIntro && (
+          <div className="mb-6 w-full max-w-[480px] lg:hidden sm:mb-8">
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-blue-700">
+              Vibra Shop
+            </p>
+            <h1 className="mb-3 text-3xl font-display font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+              {pageTitle}
+            </h1>
+            {pageDescription && (
+              <p className="text-sm leading-6 text-slate-600">{pageDescription}</p>
+            )}
+          </div>
+        )}
         {children}
-      </div>
+      </main>
     </div>
   );
 }

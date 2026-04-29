@@ -1,16 +1,16 @@
 export default function SocialButtons() {
   return (
-    <>
-      <div className="flex items-center text-slate-400 text-xs font-semibold uppercase tracking-wider my-8 before:content-[''] before:flex-1 before:h-px before:bg-slate-200 before:mr-4 after:content-[''] after:flex-1 after:h-px after:bg-slate-200 after:ml-4">
+    <section aria-labelledby="social-login-status" className="my-8">
+      <div className="flex items-center text-slate-500 text-xs font-semibold uppercase tracking-wider before:content-[''] before:flex-1 before:h-px before:bg-slate-200 before:mr-4 after:content-[''] after:flex-1 after:h-px after:bg-slate-200 after:ml-4">
         O Continúa con
       </div>
 
-      <div className="flex gap-4">
-        <button
-          type="button"
-          className="flex-1 flex items-center justify-center gap-2.5 bg-violet-100 border border-transparent rounded-xl py-3.5 text-[0.95rem] font-semibold text-slate-800 cursor-pointer transition-all duration-200 hover:bg-indigo-100 disabled:opacity-50"
-          disabled
-        >
+      <p id="social-login-status" className="sr-only">
+        El inicio de sesión con Google y Apple todavía no está disponible.
+      </p>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2" aria-hidden="true">
+        <div className="flex items-center justify-center gap-2.5 rounded-xl border border-slate-200 bg-slate-100 py-3.5 text-[0.95rem] font-semibold text-slate-700">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -29,19 +29,19 @@ export default function SocialButtons() {
               fill="#EA4335"
             />
           </svg>
-          Google
-        </button>
-        <button
-          type="button"
-          className="flex-1 flex items-center justify-center gap-2.5 bg-violet-100 border border-transparent rounded-xl py-3.5 text-[0.95rem] font-semibold text-slate-800 cursor-pointer transition-all duration-200 hover:bg-indigo-100 disabled:opacity-50"
-          disabled
-        >
+          Google próximamente
+        </div>
+        <div className="flex items-center justify-center gap-2.5 rounded-xl border border-slate-200 bg-slate-100 py-3.5 text-[0.95rem] font-semibold text-slate-700">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.04 2.26-.82 3.59-.75 2.15.11 3.53 1.14 4.3 2.16-3.75 2.04-3.14 6.83.65 8.16-.83 1.99-1.92 3.8-3.62 2.6zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.32 2.4-1.99 4.34-3.74 4.25z" />
           </svg>
-          Apple
-        </button>
+          Apple próximamente
+        </div>
       </div>
-    </>
+
+      <p className="mt-3 text-center text-sm text-slate-600">
+        Por ahora podés ingresar con tu correo y contraseña.
+      </p>
+    </section>
   );
 }

@@ -10,9 +10,9 @@ type OrderFormProps = {
 
 const COUNTRIES = ["Colombia", "España", "México", "Argentina", "Chile", "Perú", "Ecuador", "Uruguay"];
 const labelClass = "mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-700";
-const inputClass = "h-12 w-full rounded-2xl border border-line bg-[#f1efff] px-4 text-sm text-ink-900 outline-none transition focus:border-brand-400 focus:bg-white focus:ring-4 focus:ring-brand-100";
+const inputClass = "h-12 w-full min-w-0 rounded-2xl border border-line bg-[#f1efff] px-4 text-sm text-ink-900 outline-none transition focus:border-brand-400 focus:bg-white focus:ring-4 focus:ring-brand-100";
 const errorClass = "mt-2 block text-xs font-medium text-danger";
-const sectionClass = "rounded-[28px] border border-white/70 bg-white/55 p-6 shadow-soft backdrop-blur md:p-7";
+const sectionClass = "rounded-[24px] border border-white/70 bg-white/55 p-4 shadow-soft backdrop-blur sm:p-5 md:rounded-[28px] md:p-7";
 
 export function OrderForm({ onFormChange }: OrderFormProps) {
   const { formData: savedFormData, setFormData: saveFormData, setIsFormValid: setSavedIsFormValid } = useCheckoutState();
@@ -30,10 +30,10 @@ export function OrderForm({ onFormChange }: OrderFormProps) {
   return (
     <div className="space-y-6">
       <section className={sectionClass}>
-        <div className="mb-6 flex items-start gap-4">
+        <div className="mb-5 flex items-start gap-3 sm:gap-4">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-400 font-display text-sm font-bold text-white">1</span>
-          <div>
-            <h2 className="font-display text-[28px] font-bold tracking-[-0.03em] text-ink-900">Datos Personales</h2>
+          <div className="min-w-0">
+            <h2 className="font-display text-2xl font-bold tracking-[-0.03em] text-ink-900 sm:text-[28px]">Datos Personales</h2>
             <p className="text-sm text-ink-700">Todos los campos marcados con * son obligatorios.</p>
           </div>
         </div>
@@ -60,10 +60,10 @@ export function OrderForm({ onFormChange }: OrderFormProps) {
       </section>
 
       <section className={sectionClass}>
-        <div className="mb-6 flex items-start gap-4">
+        <div className="mb-5 flex items-start gap-3 sm:gap-4">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-400 font-display text-sm font-bold text-white">2</span>
-          <div>
-            <h2 className="font-display text-[28px] font-bold tracking-[-0.03em] text-ink-900">Dirección de Envío</h2>
+          <div className="min-w-0">
+            <h2 className="font-display text-2xl font-bold tracking-[-0.03em] text-ink-900 sm:text-[28px]">Dirección de Envío</h2>
             <p className="text-sm text-ink-700">Verifica tus datos antes de finalizar la compra.</p>
           </div>
         </div>
@@ -101,10 +101,10 @@ export function OrderForm({ onFormChange }: OrderFormProps) {
       </section>
 
       <section className={sectionClass}>
-        <div className="mb-6 flex items-start gap-4">
+        <div className="mb-5 flex items-start gap-3 sm:gap-4">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-400 font-display text-sm font-bold text-white">3</span>
-          <div>
-            <h2 className="font-display text-[28px] font-bold tracking-[-0.03em] text-ink-900">Método de Pago</h2>
+          <div className="min-w-0">
+            <h2 className="font-display text-2xl font-bold tracking-[-0.03em] text-ink-900 sm:text-[28px]">Método de Pago</h2>
             <p className="text-sm text-ink-700">El pago es simulado y la interfaz permanece en español.</p>
           </div>
         </div>
@@ -144,15 +144,18 @@ export function OrderForm({ onFormChange }: OrderFormProps) {
             </div>
           </div>
         ) : (
-          <div className="rounded-3xl border border-brand-200 bg-white p-5 shadow-sm">
-            <div className="mb-5 flex items-start justify-between gap-4">
-              <p className="font-display text-[32px] font-bold leading-tight tracking-[-0.04em] text-ink-900">Compra y envía dinero a todo el mundo de forma rápida y sencilla.</p>
-              <div className="rounded-2xl bg-[#003087] px-4 py-2 text-sm font-bold text-white shadow-sm">PayPal</div>
+          <div className="rounded-3xl border border-brand-200 bg-white p-4 shadow-sm sm:p-5">
+            <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <p className="font-display text-2xl font-bold leading-tight tracking-[-0.04em] text-ink-900 sm:text-[32px]">Compra y envía dinero a todo el mundo de forma rápida y sencilla.</p>
+              <div className="w-fit rounded-2xl bg-[#003087] px-4 py-2 text-sm font-bold text-white shadow-sm">PayPal</div>
             </div>
 
             <div className="space-y-3">
               <div>
-                <select className={inputClass} value={formData.paypalCountry} onChange={(event) => handleChange("paypalCountry", event.target.value)} onBlur={() => handleBlur("paypalCountry")}>
+                <label htmlFor="paypal-country" className={labelClass}>
+                  País o región de PayPal
+                </label>
+                <select id="paypal-country" className={inputClass} value={formData.paypalCountry} onChange={(event) => handleChange("paypalCountry", event.target.value)} onBlur={() => handleBlur("paypalCountry")}>
                   <option value="">País/región</option>
                   {COUNTRIES.map((country) => (
                     <option key={`paypal-${country}`} value={country}>{country}</option>
@@ -161,23 +164,38 @@ export function OrderForm({ onFormChange }: OrderFormProps) {
                 {errors.paypalCountry && <span className={errorClass}>{errors.paypalCountry}</span>}
               </div>
               <div>
-                <input className={inputClass} value={formData.paypalFirstName} onChange={(event) => handleChange("paypalFirstName", event.target.value)} onBlur={() => handleBlur("paypalFirstName")} placeholder="Nombre" />
+                <label htmlFor="paypal-first-name" className={labelClass}>
+                  Nombre
+                </label>
+                <input id="paypal-first-name" className={inputClass} value={formData.paypalFirstName} onChange={(event) => handleChange("paypalFirstName", event.target.value)} onBlur={() => handleBlur("paypalFirstName")} placeholder="Nombre" />
                 {errors.paypalFirstName && <span className={errorClass}>{errors.paypalFirstName}</span>}
               </div>
               <div>
-                <input className={inputClass} value={formData.paypalLastName} onChange={(event) => handleChange("paypalLastName", event.target.value)} onBlur={() => handleBlur("paypalLastName")} placeholder="Apellidos" />
+                <label htmlFor="paypal-last-name" className={labelClass}>
+                  Apellidos
+                </label>
+                <input id="paypal-last-name" className={inputClass} value={formData.paypalLastName} onChange={(event) => handleChange("paypalLastName", event.target.value)} onBlur={() => handleBlur("paypalLastName")} placeholder="Apellidos" />
                 {errors.paypalLastName && <span className={errorClass}>{errors.paypalLastName}</span>}
               </div>
               <div>
-                <input className={inputClass} type="email" value={formData.paypalEmail} onChange={(event) => handleChange("paypalEmail", event.target.value)} onBlur={() => handleBlur("paypalEmail")} placeholder="Dirección de correo electrónico" />
+                <label htmlFor="paypal-email" className={labelClass}>
+                  Correo electrónico
+                </label>
+                <input id="paypal-email" className={inputClass} type="email" value={formData.paypalEmail} onChange={(event) => handleChange("paypalEmail", event.target.value)} onBlur={() => handleBlur("paypalEmail")} placeholder="Dirección de correo electrónico" />
                 {errors.paypalEmail && <span className={errorClass}>{errors.paypalEmail}</span>}
               </div>
               <div>
-                <input className={inputClass} type="password" value={formData.paypalPassword} onChange={(event) => handleChange("paypalPassword", event.target.value)} onBlur={() => handleBlur("paypalPassword")} placeholder="Crear contraseña" />
+                <label htmlFor="paypal-password" className={labelClass}>
+                  Crear contraseña
+                </label>
+                <input id="paypal-password" className={inputClass} type="password" value={formData.paypalPassword} onChange={(event) => handleChange("paypalPassword", event.target.value)} onBlur={() => handleBlur("paypalPassword")} placeholder="Crear contraseña" />
                 {errors.paypalPassword && <span className={errorClass}>{errors.paypalPassword}</span>}
               </div>
               <div>
-                <input className={inputClass} type="password" value={formData.paypalPasswordConfirm} onChange={(event) => handleChange("paypalPasswordConfirm", event.target.value)} onBlur={() => handleBlur("paypalPasswordConfirm")} placeholder="Confirmar contraseña" />
+                <label htmlFor="paypal-password-confirm" className={labelClass}>
+                  Confirmar contraseña
+                </label>
+                <input id="paypal-password-confirm" className={inputClass} type="password" value={formData.paypalPasswordConfirm} onChange={(event) => handleChange("paypalPasswordConfirm", event.target.value)} onBlur={() => handleBlur("paypalPasswordConfirm")} placeholder="Confirmar contraseña" />
                 {errors.paypalPasswordConfirm && <span className={errorClass}>{errors.paypalPasswordConfirm}</span>}
               </div>
               <div className="rounded-2xl border border-dashed border-brand-300 bg-brand-50 px-4 py-3 text-sm text-brand-700">

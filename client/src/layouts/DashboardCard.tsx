@@ -8,7 +8,6 @@ interface DashboardCardProps {
     value: string;
   }[];
   onLogout: () => void;
-  isAdmin?: boolean;
 }
 
 export default function DashboardCard({
@@ -16,7 +15,6 @@ export default function DashboardCard({
   subtitle,
   userInfo,
   onLogout,
-  isAdmin,
 }: DashboardCardProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 font-sans p-6">

@@ -30,9 +30,9 @@ export default function Cart() {
 
   return (
     <MainStoreLayout>
-      <section className="mx-auto max-w-6xl px-4 py-8">
-        <div className="mb-6 flex items-end justify-between">
-          <h1 className="text-3xl font-extrabold text-slate-900">Carrito</h1>
+      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-5 sm:py-8">
+        <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">Carrito</h1>
           <span className="text-sm text-slate-600">{totalItems} ítems</span>
         </div>
 
@@ -50,11 +50,11 @@ export default function Cart() {
           <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
             <div className="space-y-3">
               {items.map((item) => (
-                <article key={item.id} className="flex gap-4 rounded-xl border bg-white p-4">
+                <article key={item.id} className="flex flex-col gap-4 rounded-2xl border bg-white p-4 sm:flex-row">
                   <img
                     src={item.product.imageUrl}
                     alt={item.product.name}
-                    className="h-24 w-24 rounded-lg object-cover"
+                    className="h-24 w-full rounded-xl object-cover sm:w-24"
                   />
                   <div className="flex-1">
                     <p className="font-bold text-slate-900">{item.product.name}</p>
@@ -63,31 +63,31 @@ export default function Cart() {
                     </p>
                     <p className="mt-1 text-sm text-slate-700">{formatPrice(item.unitPrice)}</p>
 
-                    <div className="mt-3 flex items-center gap-2">
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
                       <button
-                        className="h-8 w-8 rounded border text-sm"
+                        className="h-11 w-11 rounded-xl border text-sm"
                         onClick={() => void decrement(item)}
                         aria-label="Disminuir"
                       >
                         -
                       </button>
-                      <span className="w-7 text-center text-sm font-semibold">{item.quantity}</span>
+                      <span className="w-9 text-center text-sm font-semibold">{item.quantity}</span>
                       <button
-                        className="h-8 w-8 rounded border text-sm"
+                        className="h-11 w-11 rounded-xl border text-sm"
                         onClick={() => void increment(item)}
                         aria-label="Aumentar"
                       >
                         +
                       </button>
                       <button
-                        className="ml-3 text-xs font-semibold text-rose-600"
+                        className="ml-0 text-xs font-semibold text-rose-600 sm:ml-3"
                         onClick={() => void remove(item.id)}
                       >
                         Eliminar
                       </button>
                     </div>
                   </div>
-                  <p className="text-sm font-bold text-slate-900">{formatPrice(item.subtotal)}</p>
+                  <p className="text-right text-sm font-bold text-slate-900 sm:text-left">{formatPrice(item.subtotal)}</p>
                 </article>
               ))}
             </div>

@@ -29,4 +29,4 @@ export {
 } from "./validation";
 
 // Rate Limiter
-export { rateLimiter, authRateLimiter } from "./rateLimiter";
+export { rateLimiter, authRateLimiter, clearRateLimitStore } from "./rateLimiter";

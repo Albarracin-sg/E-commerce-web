@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useProduct } from "../hooks/useCatalog";
@@ -13,8 +13,10 @@ function formatPrice(value: number) {
 }
 
 const DEFAULT_COLORS = ["Negro", "Blanco", "Azul", "Rojo", "Verde"];
-const DEFAULT_SIZES = ["XS", "S", "M", "L", "XL"];
+const APPAREL_SIZES = ["XS", "S", "M", "L", "XL"];
+const SHOE_SIZES_US = ["6", "6.5", "7", "7.5", "8", "8.5", "9", "9.5", "10", "10.5", "11", "11.5", "12"];
 const NO_SIZE_CATEGORIES = ["Accesorios", "Bolsos"];
+const SHOE_CATEGORIES = ["Calzado"];
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -25,14 +27,30 @@ export default function ProductDetail() {
   const { product, loading, error } = useProduct(parsedId);
 
   const [selectedColor, setSelectedColor] = useState<string>(DEFAULT_COLORS[0]);
-  const [selectedSize, setSelectedSize] = useState<string>(DEFAULT_SIZES[2]);
+  const [selectedSize, setSelectedSize] = useState<string>(APPAREL_SIZES[2]);
   const [submitting, setSubmitting] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
-  const needsSize = useMemo(() => {
+  const availableSizes = useMemo(() => {
     const category = product?.category?.name;
-    return category ? !NO_SIZE_CATEGORIES.includes(category) : true;
+    if (!category) return APPAREL_SIZES;
+    if (NO_SIZE_CATEGORIES.includes(category)) return [];
+    if (SHOE_CATEGORIES.includes(category)) return SHOE_SIZES_US;
+    return APPAREL_SIZES;
   }, [product?.category?.name]);
+
+  const needsSize = availableSizes.length > 0;
+
+  useEffect(() => {
+    if (!needsSize) {
+      setSelectedSize("");
+      return;
+    }
+
+    if (!availableSizes.includes(selectedSize)) {
+      setSelectedSize(availableSizes[Math.floor(availableSizes.length / 2)] ?? "");
+    }
+  }, [availableSizes, needsSize, selectedSize]);
 
   const qtyInCart = items
     .filter(
@@ -68,7 +86,7 @@ export default function ProductDetail() {
 
   return (
     <MainStoreLayout>
-      <section className="mx-auto max-w-6xl px-4 py-8">
+      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-5 sm:py-8">
         <div className="mb-4 text-sm text-slate-600">
           <Link to="/home" className="hover:underline">
             Inicio
@@ -121,11 +139,11 @@ export default function ProductDetail() {
                   {product.category.name}
                 </p>
               )}
-              <h1 className="mt-2 text-3xl font-extrabold text-slate-900">{product.name}</h1>
+              <h1 className="mt-2 text-2xl font-extrabold text-slate-900 sm:text-3xl">{product.name}</h1>
               {product.description && <p className="mt-3 text-slate-600">{product.description}</p>}
 
               <div className="mt-5 flex items-center gap-3">
-                <p className="text-3xl font-extrabold text-slate-900">{formatPrice(product.price)}</p>
+                <p className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{formatPrice(product.price)}</p>
                 {product.comparePrice && (
                   <p className="text-lg text-slate-400 line-through">{formatPrice(product.comparePrice)}</p>
                 )}
@@ -141,7 +159,7 @@ export default function ProductDetail() {
                   {DEFAULT_COLORS.map((color) => (
                     <button
                       key={color}
-                      className={`rounded border px-3 py-1.5 text-sm ${selectedColor === color ? "border-slate-900 bg-slate-900 text-white" : "hover:bg-slate-100"}`}
+                        className={`min-h-[44px] rounded-xl border px-3 py-2 text-sm ${selectedColor === color ? "border-slate-900 bg-slate-900 text-white" : "hover:bg-slate-100"}`}
                       onClick={() => setSelectedColor(color)}
                     >
                       {color}
@@ -154,10 +172,10 @@ export default function ProductDetail() {
                 <div className="mt-4">
                   <p className="mb-2 text-xs font-semibold uppercase text-slate-500">Talla</p>
                   <div className="flex flex-wrap gap-2">
-                    {DEFAULT_SIZES.map((size) => (
+                    {availableSizes.map((size) => (
                       <button
                         key={size}
-                        className={`rounded border px-3 py-1.5 text-sm ${selectedSize === size ? "border-slate-900 bg-slate-900 text-white" : "hover:bg-slate-100"}`}
+                        className={`min-h-[44px] rounded-xl border px-3 py-2 text-sm ${selectedSize === size ? "border-slate-900 bg-slate-900 text-white" : "hover:bg-slate-100"}`}
                         onClick={() => setSelectedSize(size)}
                       >
                         {size}
@@ -175,10 +193,10 @@ export default function ProductDetail() {
               {actionError && <p className="mt-3 text-xs font-semibold text-rose-600">{actionError}</p>}
 
               <button
-                className="mt-5 w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-                disabled={product.stock <= 0 || stockReached || submitting}
-                onClick={() => void handleAddToCart()}
-              >
+                 className="mt-5 min-h-[44px] w-full rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                 disabled={product.stock <= 0 || stockReached || submitting}
+                 onClick={() => void handleAddToCart()}
+               >
                 {submitting
                   ? "Agregando..."
                   : product.stock <= 0

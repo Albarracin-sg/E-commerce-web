@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCheckoutState } from "../context/CheckoutContext";
 
-const pageClassName = "min-h-screen bg-[#0f0f1a] bg-[radial-gradient(circle_at_1px_1px,#1e2740_1px,transparent_0)] [background-size:24px_24px] px-4 py-8 sm:px-6 lg:px-10";
+const pageClassName = "min-h-screen overflow-x-hidden bg-[#0f0f1a] bg-[radial-gradient(circle_at_1px_1px,#1e2740_1px,transparent_0)] px-3 py-4 [background-size:24px_24px] sm:px-4 sm:py-6 lg:px-10 lg:py-8";
 
 export default function ProcessingPaymentPage() {
   const navigate = useNavigate();
@@ -34,16 +34,16 @@ export default function ProcessingPaymentPage() {
 
   return (
     <div className={pageClassName}>
-      <div className="mx-auto max-w-4xl overflow-hidden rounded-[32px] border border-white/70 bg-white/50 shadow-soft backdrop-blur">
-        <header className="flex items-center justify-between border-b border-line/80 px-6 py-4 md:px-8">
-          <span className="font-display text-lg font-extrabold uppercase tracking-[0.12em] text-brand-600">Vibra Shop</span>
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-500">Procesando pago</span>
+      <div className="mx-auto max-w-4xl overflow-hidden rounded-[24px] border border-white/70 bg-white/50 shadow-soft backdrop-blur sm:rounded-[32px]">
+        <header className="flex flex-col gap-2 border-b border-line/80 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 md:px-8">
+          <span className="font-display text-base font-extrabold uppercase tracking-[0.12em] text-brand-600 sm:text-lg">Vibra Shop</span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-500 sm:text-xs">Procesando pago</span>
         </header>
 
-        <main className="px-6 py-16 md:px-8">
-          <div className="rounded-[28px] bg-white px-6 py-14 text-center shadow-soft">
+        <main className="px-4 py-10 sm:px-6 sm:py-16 md:px-8">
+          <div className="rounded-[24px] bg-white px-4 py-10 text-center shadow-soft sm:rounded-[28px] sm:px-6 sm:py-14">
             <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-brand-100 border-t-brand-500" />
-            <h1 className="mt-8 font-display text-4xl font-bold tracking-[-0.04em] text-ink-900">Estamos procesando tu compra</h1>
+            <h1 className="mt-8 font-display text-3xl font-bold tracking-[-0.04em] text-ink-900 sm:text-4xl">Estamos procesando tu compra</h1>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-ink-700">{stage}</p>
             <div className="mx-auto mt-8 max-w-xl">
               <div className="h-3 overflow-hidden rounded-full bg-brand-100">

@@ -45,39 +45,45 @@ export default function Catalog() {
 
   return (
     <MainStoreLayout>
-      <section className="mx-auto max-w-7xl px-4 py-8">
-        <div className="mb-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <section className="mx-auto max-w-7xl px-4 py-6 sm:px-5 sm:py-8">
+        <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
             <button
               type="button"
               onClick={() => setFiltersOpen((prev) => !prev)}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border bg-white text-lg font-bold text-slate-600 hover:bg-slate-50"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border bg-white text-lg font-bold text-slate-600 hover:bg-slate-50"
               title={filtersOpen ? "Ocultar filtros" : "Mostrar filtros"}
               aria-label={filtersOpen ? "Ocultar filtros" : "Mostrar filtros"}
             >
               ☰
             </button>
-            <div>
-              <h1 className="text-3xl font-extrabold text-slate-900">Catálogo</h1>
+            <div className="min-w-0">
+              <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">Catálogo</h1>
               {filters.search && (
-                <p className="text-sm text-slate-500">Resultados para: <b>{filters.search}</b></p>
+                <p className="mt-1 break-words text-sm text-slate-500">Resultados para: <b>{filters.search}</b></p>
               )}
             </div>
           </div>
 
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className="rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="default">Relevancia</option>
-            <option value="price_asc">Precio: menor a mayor</option>
-            <option value="price_desc">Precio: mayor a menor</option>
-            <option value="newest">Más recientes</option>
-          </select>
+          <div className="w-full md:w-auto">
+            <label htmlFor="catalog-sort" className="sr-only">
+              Ordenar productos del catálogo
+            </label>
+            <select
+              id="catalog-sort"
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="min-h-[44px] w-full rounded-xl border px-3 py-2 text-sm md:w-auto"
+            >
+              <option value="default">Relevancia</option>
+              <option value="price_asc">Precio: menor a mayor</option>
+              <option value="price_desc">Precio: mayor a menor</option>
+              <option value="newest">Más recientes</option>
+            </select>
+          </div>
         </div>
 
-        <div className={`grid gap-5 ${filtersOpen ? "lg:grid-cols-[270px_minmax(0,1fr)]" : "grid-cols-1"}`}>
+        <div className={filtersOpen ? "grid gap-5 lg:grid-cols-[270px_minmax(0,1fr)]" : "grid gap-5"}>
           {filtersOpen && (
             <CatalogFilters
               categories={categories}
@@ -99,21 +105,21 @@ export default function Catalog() {
             />
 
             {products && products.totalPages > 1 && (
-              <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+              <div className="flex flex-col items-stretch justify-center gap-2 pt-2 sm:flex-row sm:items-center">
                 <button
                   disabled={products.page === 1}
                   onClick={() => setPage(products.page - 1)}
-                  className="rounded border px-3 py-2 text-sm disabled:opacity-50"
+                  className="min-h-[44px] rounded-xl border px-3 py-2 text-sm disabled:opacity-50"
                 >
                   Anterior
                 </button>
-                <span className="text-sm text-slate-700">
+                <span className="text-center text-sm text-slate-700">
                   Página {products.page} de {products.totalPages}
                 </span>
                 <button
                   disabled={products.page === products.totalPages}
                   onClick={() => setPage(products.page + 1)}
-                  className="rounded border px-3 py-2 text-sm disabled:opacity-50"
+                  className="min-h-[44px] rounded-xl border px-3 py-2 text-sm disabled:opacity-50"
                 >
                   Siguiente
                 </button>

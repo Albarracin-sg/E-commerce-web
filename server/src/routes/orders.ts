@@ -8,5 +8,11 @@ router.use(authenticateToken);
 
 router.post("/", createOrder);
 router.get("/", getOrders);
+import { authenticateToken, validateRequest, validationSchemas } from "../middlewares";
+
+const router = Router();
+
+router.post("/", authenticateToken, validateRequest(validationSchemas.orders.create), createOrder);
+router.get("/", authenticateToken, getOrders);
 
 export default router;
