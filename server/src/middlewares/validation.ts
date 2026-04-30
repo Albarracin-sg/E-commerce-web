@@ -89,6 +89,7 @@ const orderItemSchema = z
 
 const orderBodySchema = z
   .object({
+    userId: integerIdSchema.optional(),
     name: trimmedStringSchema.min(2).max(100),
     email: normalizedEmailSchema,
     address: trimmedStringSchema.min(5).max(200),
