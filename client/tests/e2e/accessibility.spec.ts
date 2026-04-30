@@ -73,5 +73,5 @@ test('login route supports basic keyboard navigation', async ({ page }) => {
   await expect(page.locator('#login-password')).toBeFocused();
 
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('button', { name: /mostrar contrase.+\|ocultar contrase.+/i })).toBeFocused();
+  await expect(page.getByRole('button', { name: /mostrar contrase.+|ocultar contrase.+/i })).toBeFocused();
 });
