@@ -97,13 +97,13 @@ export default function Register() {
       sideSubtitle="Crea tu cuenta y descubre tu flow. Acceso exclusivo a colecciones limitadas y envíos rápidos."
       badge={{
         text: "ÚNETE A LA ELITE",
-        color: "bg-[#ff8fa3] text-white",
+        color: "bg-rose-700 text-white",
       }}
     >
       <div className="w-full max-w-[480px] rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.05)] sm:p-8 lg:p-12 max-sm:max-w-full max-sm:rounded-2xl max-sm:shadow-none">
-        <h2 className="mb-2.5 text-[1.85rem] font-display font-bold tracking-tight text-slate-900 sm:text-[2rem]">
+        <h1 className="mb-2.5 text-[1.85rem] font-display font-bold tracking-tight text-slate-900 sm:text-[2rem]">
           Crea tu cuenta
-        </h2>
+        </h1>
         <p className="mb-6 text-[0.95rem] text-slate-600 sm:mb-8">
           Introduce tus datos para empezar la experiencia.
         </p>

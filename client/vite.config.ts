@@ -23,6 +23,17 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
+      include: [
+        'src/hooks/**/*.{ts,tsx}',
+        'src/services/**/*.ts',
+        'src/modules/admin/**/*.{ts,tsx}',
+      ],
+      thresholds: {
+        lines: 40,
+        functions: 39,
+        statements: 40,
+        branches: 30,
+      },
     },
   },
 })

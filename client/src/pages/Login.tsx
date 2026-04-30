@@ -78,9 +78,9 @@ export default function Login() {
       badge={{ text: "VIBRA SHOP" }}
     >
       <div className="w-full max-w-[420px]">
-        <h2 className="mb-2.5 text-[1.85rem] font-display font-bold tracking-tight text-slate-900 sm:text-[2rem]">
-          Bienvenido.
-        </h2>
+        <h1 className="mb-2.5 text-[1.85rem] font-display font-bold tracking-tight text-slate-900 sm:text-[2rem]">
+          Bienvenido
+        </h1>
         <p className="mb-6 text-[0.95rem] text-slate-600 sm:mb-8">
           Ingresa tus credenciales para continuar tu experiencia.
         </p>
@@ -115,7 +115,7 @@ export default function Login() {
             ariaDescribedBy="login-email-error"
           />
 
-            <div className="relative mb-5">
+          <div className="relative mb-5">
             <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <label
                 className="block text-xs font-bold text-slate-600 uppercase tracking-wide"
@@ -129,7 +129,6 @@ export default function Login() {
             </div>
             <AuthInput
               id="login-password"
-              label=""
               type="password"
               value={password}
               onChange={handlePasswordChange}
