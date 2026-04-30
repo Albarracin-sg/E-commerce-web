@@ -10,7 +10,7 @@ describe('App smoke', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByRole('heading', { level: 1, name: /únete a la revolución urbana\./i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 2, name: /^bienvenido\.$/i })).toBeInTheDocument();
+    expect(screen.getAllByText(/vibra shop/i).length).toBeGreaterThan(0);
+    expect(screen.getByRole('heading', { level: 1, name: /^bienvenido$/i })).toBeInTheDocument();
   });
 });
