@@ -22,7 +22,7 @@ export default function Home() {
             Explora categorías, productos destacados y navega al detalle de cada producto.
           </p>
           <button
-            className="mt-6 min-h-[44px] rounded-xl bg-rose-500 px-5 py-2.5 text-sm font-bold hover:bg-rose-400"
+            className="mt-6 min-h-[44px] rounded-xl bg-rose-700 px-5 py-2.5 text-sm font-bold hover:bg-rose-800"
             onClick={() => navigate("/catalogo")}
           >
             Comprar ahora
@@ -35,7 +35,7 @@ export default function Home() {
           <h2 className="text-2xl font-bold text-slate-900">Categorías</h2>
           <button
             onClick={() => navigate("/catalogo")}
-            className="text-sm font-semibold text-rose-600 hover:underline"
+            className="text-sm font-semibold text-rose-700 hover:underline"
           >
             Ver catálogo completo
           </button>
