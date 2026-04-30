@@ -6,15 +6,33 @@ import {
   putCategory,
   removeCategory,
 } from "../controllers/categoryController";
-import { authenticateToken, authorizeRole } from "../middlewares";
+import { authenticateToken, authorizeRole, validateRequest, validationSchemas } from "../middlewares";
 
 const router = Router();
 
 router.get("/", getCategories);
-router.get("/:slug", getCategoryBySlug);
+router.get("/:slug", validateRequest(validationSchemas.categories.bySlug), getCategoryBySlug);
 
-router.post("/", authenticateToken, authorizeRole(["ADMIN"]), postCategory);
-router.put("/:id", authenticateToken, authorizeRole(["ADMIN"]), putCategory);
-router.delete("/:id", authenticateToken, authorizeRole(["ADMIN"]), removeCategory);
+router.post(
+  "/",
+  authenticateToken,
+  authorizeRole(["ADMIN"]),
+  validateRequest(validationSchemas.categories.create),
+  postCategory
+);
+router.put(
+  "/:id",
+  authenticateToken,
+  authorizeRole(["ADMIN"]),
+  validateRequest(validationSchemas.categories.update),
+  putCategory
+);
+router.delete(
+  "/:id",
+  authenticateToken,
+  authorizeRole(["ADMIN"]),
+  validateRequest(validationSchemas.categories.remove),
+  removeCategory
+);
 
 export default router;

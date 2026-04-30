@@ -5,15 +5,19 @@ import {
   getDashboardMetrics,
   updateAdminOrderStatus,
 } from "../controllers/adminController";
-import { authenticateToken, authorizeRole } from "../middlewares";
+import { authenticateToken, authorizeRole, validateRequest, validationSchemas } from "../middlewares";
 
 const router = Router();
 
 router.use(authenticateToken, authorizeRole(["ADMIN"]));
 
 router.get("/dashboard/metrics", getDashboardMetrics);
-router.get("/users", getAdminUsers);
-router.get("/orders", getAdminOrders);
-router.patch("/orders/:id/status", updateAdminOrderStatus);
+router.get("/users", validateRequest(validationSchemas.admin.listUsers), getAdminUsers);
+router.get("/orders", validateRequest(validationSchemas.admin.listOrders), getAdminOrders);
+router.patch(
+  "/orders/:id/status",
+  validateRequest(validationSchemas.admin.updateOrderStatus),
+  updateAdminOrderStatus
+);
 
 export default router;

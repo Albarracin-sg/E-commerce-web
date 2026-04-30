@@ -216,6 +216,17 @@ Una vez ejecutado el comando, usa estos datos para entrar al panel de administra
 
 ---
 
+## Rate Limiting por ambiente
+
+- `NODE_ENV=test`: rate limiter desactivado (bypass) para pruebas controladas.
+- `NODE_ENV=development`: límites más permisivos (mínimo 1000 requests por ventana) y whitelist local activa.
+- `NODE_ENV=production`: límites restrictivos por defecto (`100/60s` general y `5/15m` para auth).
+
+### Whitelist local para pruebas
+
+En `development` se hace bypass para IPs locales exactas: `127.0.0.1`, `::1`, `::ffff:127.0.0.1`.
+Esto evita bloqueos 429 durante pruebas de carga/controladas en entorno local.
+
 ## Endpoints de la API
 
 ### Públicos (sin autenticación)
