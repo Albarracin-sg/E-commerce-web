@@ -1,8 +1,7 @@
-import type { CartItem, Prisma } from "@prisma/client";
 import type { Request, Response } from "express";
 import prisma from "../config/prisma";
 import type { AuthenticatedRequest } from "../middlewares/auth";
-import { decrementProductStock, decrementVariantStock, incrementProductStock, incrementVariantStock } from "../services/inventoryService";
+import { decrementProductStock, decrementVariantStock } from "../services/inventoryService";
 
 const ORDER_ERROR_CODE = {
   INVALID_ORDER_REFERENCE: "INVALID_ORDER_REFERENCE",
@@ -43,23 +42,23 @@ function parseAuthenticatedUserId(req: Request) {
   const token = extractTokenFromHeader(req.headers.authorization);
   if (!token) return null;
 
-const ORDER_ERROR = {
+const _ORDER_ERROR = {
   PRODUCT_NOT_FOUND: "PRODUCT_NOT_FOUND",
   INSUFFICIENT_STOCK: "INSUFFICIENT_STOCK",
   USER_RESOLUTION_FAILED: "USER_RESOLUTION_FAILED",
 } as const;
 
-class OrderError extends Error {
-  constructor(public readonly code: (typeof ORDER_ERROR)[keyof typeof ORDER_ERROR]) {
+class _OrderError extends Error {
+  constructor(public readonly code: (typeof _ORDER_ERROR)[keyof typeof _ORDER_ERROR]) {
     super(code);
   }
 }
 
-function isPrismaForeignKeyError(error: unknown): error is PrismaKnownErrorLike {
+function _isPrismaForeignKeyError(error: unknown): error is PrismaKnownErrorLike {
   return typeof error === "object" && error !== null && "code" in error && (error as PrismaKnownErrorLike).code === "P2003";
 }
 
-function sendOrderReferenceError(res: Response, code: OrderErrorCode, message: string) {
+function _sendOrderReferenceError(res: Response, code: OrderErrorCode, message: string) {
   res.status(422).json({
     success: false,
     code,
@@ -67,7 +66,7 @@ function sendOrderReferenceError(res: Response, code: OrderErrorCode, message: s
   });
 }
 
-async function resolveOrderUserId(
+async function _resolveOrderUserId(
   payload: CreateOrderPayload,
   authenticatedUserId: number | null
 ): Promise<OrderUserResolutionResult> {
@@ -136,7 +135,7 @@ export async function createOrder(req: Request, res: Response) {
       });
 
     const authenticatedUserId = parseAuthenticatedUserId(req);
-    const { errorCode, userId: resolvedUserId } = await resolveOrderUserId(payload, authenticatedUserId);
+    const { errorCode, userId: _resolvedUserId } = await _resolveOrderUserId(payload, authenticatedUserId);
 
     if (errorCode === ORDER_ERROR_CODE.USER_NOT_FOUND) {
       sendOrderReferenceError(res, errorCode, "El usuario indicado no existe");
