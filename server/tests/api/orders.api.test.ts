@@ -63,6 +63,13 @@ describe("POST /api/orders", () => {
         cartItem: {
           deleteMany: vi.fn(),
         },
+        product: {
+          findMany: vi.fn().mockResolvedValue([{ id: 101, price: 169900 }]),
+          updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+        },
+        productVariant: {
+          updateMany: vi.fn(),
+        },
         order: {
           create: vi.fn().mockResolvedValue({
             id: 501,
