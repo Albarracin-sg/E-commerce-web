@@ -30,10 +30,10 @@ const getStatusColor = (statusCode: number): string => {
  */
 export const logger = (req: Request, res: Response, next: NextFunction) => {
   const startTime = Date.now();
-  const originalSend = res.send;
+  const originalSend = res.send.bind(res) as Response["send"];
 
   // Interceptar el envío de respuesta
-  res.send = function (data: any) {
+  res.send = ((data: unknown) => {
     const duration = Date.now() - startTime;
     const statusColor = getStatusColor(res.statusCode);
 
@@ -46,8 +46,8 @@ export const logger = (req: Request, res: Response, next: NextFunction) => {
       console.log(`  Body: ${JSON.stringify(req.body)}`);
     }
 
-    return originalSend.call(this, data);
-  };
+    return originalSend(data);
+  }) as Response["send"];
 
   next();
 };

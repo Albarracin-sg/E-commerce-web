@@ -10,6 +10,7 @@ describe('App smoke', () => {
       </MemoryRouter>
     );
 
+    expect(screen.getAllByText(/vibra shop/i).length).toBeGreaterThan(0);
     expect(screen.getByRole('heading', { level: 1, name: /^bienvenido$/i })).toBeInTheDocument();
   });
 });
